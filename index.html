@@ -1,0 +1,1000 @@
+<meta charset="utf-8">
+<title>Performance Report 2019–2027</title>
+<style>
+  :root{
+    color-scheme: light;
+    --bg:#f9f9f7; --surface:#fcfcfb; --surface-2:#f2f1ec;
+    --border: rgba(11,11,11,0.10); --border-strong: rgba(11,11,11,0.16);
+    --ink:#0b0b0b; --ink-2:#52514e; --ink-muted:#898781;
+    --grid:#e1e0d9; --baseline:#c3c2b7;
+    --accent:#2a78d6; --accent-ink:#184f95; --accent-soft:#e4eefa;
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+    --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+    --success-text:#006300;
+    --font-display: "Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --font-body: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    --font-mono: ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --bg:#0d0d0d; --surface:#141412; --surface-2:#1a1a18;
+      --border: rgba(255,255,255,0.11); --border-strong: rgba(255,255,255,0.18);
+      --ink:#f5f5f3; --ink-2:#c3c2b7; --ink-muted:#8b8a83;
+      --grid:#2c2c2a; --baseline:#3c3c39;
+      --accent:#3987e5; --accent-ink:#86b6ef; --accent-soft:#152238;
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+      --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#e2635a;
+      --success-text:#0ca30c;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#0d0d0d; --surface:#141412; --surface-2:#1a1a18;
+    --border: rgba(255,255,255,0.11); --border-strong: rgba(255,255,255,0.18);
+    --ink:#f5f5f3; --ink-2:#c3c2b7; --ink-muted:#8b8a83;
+    --grid:#2c2c2a; --baseline:#3c3c39;
+    --accent:#3987e5; --accent-ink:#86b6ef; --accent-soft:#152238;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+    --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#e2635a;
+    --success-text:#0ca30c;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--font-body);
+    font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent-soft); }
+
+  .wrap{ max-width:920px; margin:0 auto; padding:0 28px 120px; }
+
+  /* ---------- Cover ---------- */
+  .cover{
+    padding:64px 0 40px; border-bottom:1px solid var(--border);
+    margin-bottom:44px;
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.11em; text-transform:uppercase;
+    color:var(--accent-ink); margin:0 0 18px; display:flex; gap:10px; align-items:center;
+  }
+  .eyebrow::before{ content:""; width:22px; height:1px; background:var(--accent); display:inline-block; }
+  h1.title{
+    font-family:var(--font-display); font-weight:600; font-size:44px; line-height:1.08;
+    letter-spacing:-.01em; margin:0 0 14px; text-wrap:balance; color:var(--ink);
+  }
+  .subtitle{
+    font-size:17px; color:var(--ink-2); max-width:640px; margin:0 0 28px; text-wrap:pretty;
+  }
+  .cover-meta{
+    display:flex; flex-wrap:wrap; gap:28px; font-family:var(--font-mono); font-size:12px;
+    color:var(--ink-muted); padding-top:20px; border-top:1px dashed var(--border);
+  }
+  .cover-meta b{ color:var(--ink-2); font-weight:600; }
+
+  .kpi-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--border); border:1px solid var(--border); border-radius:10px; overflow:hidden;
+    margin-top:32px;
+  }
+  .kpi{ background:var(--surface); padding:18px 18px 16px; }
+  .kpi .label{ font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-muted); margin-bottom:8px; }
+  .kpi .value{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:24px; font-weight:600; color:var(--ink); }
+  .kpi .delta{ font-size:12.5px; margin-top:6px; font-family:var(--font-mono); }
+  .kpi .delta.up{ color:var(--success-text); }
+  .kpi .delta.flag{ color:var(--serious); }
+  .kpi .delta.neutral{ color:var(--ink-muted); }
+
+  /* ---------- Nav ---------- */
+  nav.toc{
+    position:sticky; top:0; z-index:30; background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--border);
+    margin:0 0 44px;
+  }
+  nav.toc .toc-inner{
+    max-width:920px; margin:0 auto; padding:0 28px; display:flex; gap:2px;
+    overflow-x:auto; scrollbar-width:none;
+  }
+  nav.toc .toc-inner::-webkit-scrollbar{ display:none; }
+  nav.toc a{
+    font-family:var(--font-mono); font-size:11.5px; color:var(--ink-muted); text-decoration:none;
+    padding:13px 12px; white-space:nowrap; border-bottom:2px solid transparent;
+  }
+  nav.toc a:hover{ color:var(--ink); }
+  nav.toc a.active{ color:var(--accent-ink); border-bottom-color:var(--accent); }
+
+  /* ---------- Sections ---------- */
+  section.rep{ margin:0 0 68px; scroll-margin-top:52px; }
+  .sec-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:6px; }
+  .sec-num{ font-family:var(--font-mono); font-size:13px; color:var(--ink-muted); }
+  h2.sec-title{
+    font-family:var(--font-display); font-size:26px; font-weight:600; margin:0;
+    letter-spacing:-.005em; color:var(--ink);
+  }
+  .sec-dek{ color:var(--ink-2); max-width:660px; margin:10px 0 28px; text-wrap:pretty; }
+
+  h3.sub{ font-family:var(--font-body); font-weight:650; font-size:14.5px; margin:0 0 4px; color:var(--ink); }
+  .sub-note{ font-size:13px; color:var(--ink-muted); margin:0 0 14px; }
+
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:22px 22px 18px; margin-bottom:22px;
+  }
+  .card-row{ display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  @media (max-width:720px){ .card-row{ grid-template-columns:1fr; } .kpi-grid{ grid-template-columns:repeat(2,1fr); } }
+
+  .chart-title-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:2px; }
+  .chart-title-row .t{ font-weight:650; font-size:13.5px; }
+  .chart-title-row .u{ font-family:var(--font-mono); font-size:11px; color:var(--ink-muted); }
+
+  .legend{ display:flex; gap:16px; flex-wrap:wrap; margin:10px 2px 0; font-size:12px; color:var(--ink-2); }
+  .legend .item{ display:flex; align-items:center; gap:6px; }
+  .legend .sw{ width:9px; height:9px; border-radius:2px; display:inline-block; }
+  .legend .ln{ width:14px; height:2px; display:inline-block; border-radius:1px; }
+  .legend .dash{ background-image:linear-gradient(90deg, currentColor 50%, transparent 50%); background-size:6px 2px; height:2px; width:14px; display:inline-block; }
+
+  table.dt{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.dt th{
+    text-align:left; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+    color:var(--ink-muted); border-bottom:1px solid var(--border-strong); padding:0 10px 8px 0;
+  }
+  table.dt td{ padding:9px 10px 9px 0; border-bottom:1px solid var(--border); color:var(--ink-2); }
+  table.dt td.num, table.dt th.num{ text-align:right; font-family:var(--font-mono); font-variant-numeric:tabular-nums; color:var(--ink); }
+  table.dt tr:last-child td{ border-bottom:none; }
+  table.dt td.name{ color:var(--ink); font-weight:500; }
+  .wide-scroll{ overflow-x:auto; }
+
+  .pill{ display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:11px;
+    padding:2px 8px; border-radius:999px; border:1px solid var(--border-strong); color:var(--ink-2); }
+  .pill.good{ color:var(--success-text); border-color:color-mix(in srgb, var(--good) 40%, var(--border-strong)); }
+  .pill.warn{ color:#8a5a00; border-color:color-mix(in srgb, var(--warning) 55%, var(--border-strong)); }
+  :root:not([data-theme="light"]) .pill.warn, :root[data-theme="dark"] .pill.warn{ color:var(--warning); }
+  .pill.crit{ color:var(--critical); border-color:color-mix(in srgb, var(--critical) 45%, var(--border-strong)); }
+
+  .callout{
+    border-left:3px solid var(--accent); background:var(--accent-soft); border-radius:0 8px 8px 0;
+    padding:14px 16px; font-size:13.5px; color:var(--ink-2); margin:18px 0;
+  }
+  .callout b{ color:var(--ink); }
+
+  .target-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:6px; }
+  @media (max-width:720px){ .target-grid{ grid-template-columns:1fr; } }
+  .target-card{ border:1px solid var(--border); border-radius:10px; padding:16px; background:var(--surface); }
+  .target-card .tc-label{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-muted); margin-bottom:8px; }
+  .target-card .tc-now{ font-family:var(--font-mono); font-size:13px; color:var(--ink-muted); margin-bottom:2px; }
+  .target-card .tc-target{ font-family:var(--font-mono); font-size:22px; font-weight:650; color:var(--accent-ink); }
+  .target-card .tc-how{ font-size:12.5px; color:var(--ink-2); margin-top:8px; padding-top:8px; border-top:1px dashed var(--border); }
+
+  footer.rep{ border-top:1px solid var(--border); padding-top:22px; margin-top:60px; }
+  footer.rep p{ font-size:12px; color:var(--ink-muted); max-width:640px; }
+
+  /* ---------- Charts ---------- */
+  .chart-svg{ display:block; width:100%; height:auto; overflow:visible; }
+  .gridline{ stroke:var(--grid); stroke-width:1; shape-rendering:crispEdges; }
+  .baseline{ stroke:var(--baseline); stroke-width:1; shape-rendering:crispEdges; }
+  .axis-label{ font-family:var(--font-mono); font-size:10.5px; fill:var(--ink-muted); }
+  .value-label{ font-family:var(--font-mono); font-size:10.5px; fill:var(--ink-2); font-variant-numeric:tabular-nums; }
+  .bar-label{ font-family:var(--font-mono); font-size:10.5px; fill:var(--ink); font-weight:600; }
+
+  .tooltip{
+    position:fixed; pointer-events:none; z-index:80; background:var(--surface); border:1px solid var(--border-strong);
+    border-radius:8px; padding:8px 10px; font-size:12px; box-shadow:0 6px 20px rgba(0,0,0,.14);
+    opacity:0; transition:opacity .1s; min-width:120px;
+  }
+  .tooltip .tt-h{ font-family:var(--font-mono); font-size:10.5px; color:var(--ink-muted); margin-bottom:4px; }
+  .tooltip .tt-row{ display:flex; justify-content:space-between; gap:14px; font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+  .tooltip .tt-row .k{ display:flex; align-items:center; gap:5px; color:var(--ink-2); }
+  .tooltip .tt-row .sw{ width:7px; height:7px; border-radius:2px; }
+  .tooltip .tt-row .v{ color:var(--ink); font-weight:600; }
+
+  a.jump{ color:var(--accent-ink); }
+
+  @media print{ nav.toc{ display:none; } }
+</style>
+
+<div class="tooltip" id="tt"></div>
+
+<div class="wrap">
+  <div class="cover">
+    <p class="eyebrow">Performance Report · IT Managed Services</p>
+    <h1 class="title">Seven and a half years as a managed&nbsp;IT partner</h1>
+    <p class="subtitle">A full review of revenue, profitability, customer portfolio and headcount from the first invoiced engagement in March 2019 to today — with a projected baseline for the rest of 2026 and all of 2027.</p>
+    <div class="cover-meta">
+      <span><b>Period</b> March 2019 – August 2026</span>
+      <span><b>Currency</b> NOK, excl. VAT unless stated otherwise</span>
+      <span><b>Source</b> operations database (orders, general ledger, payroll, time tracking)</span>
+      <span><b>Generated</b> 17 August 2026</span>
+    </div>
+
+    <div class="kpi-grid" id="kpiGrid"></div>
+  </div>
+
+  <nav class="toc" id="toc">
+    <div class="toc-inner">
+      <a href="#s1" class="jump">01 Revenue &amp; growth</a>
+      <a href="#s2" class="jump">02 Profitability</a>
+      <a href="#s3" class="jump">03 Customers &amp; portfolio</a>
+      <a href="#s4" class="jump">04 People &amp; delivery</a>
+      <a href="#s5" class="jump">05 Cash &amp; risk</a>
+      <a href="#s6" class="jump">06 Forecast &amp; targets</a>
+    </div>
+  </nav>
+
+  <!-- ===================== 01 REVENUE ===================== -->
+  <section class="rep" id="s1">
+    <div class="sec-head"><span class="sec-num">01</span><h2 class="sec-title">Revenue &amp; growth</h2></div>
+    <p class="sec-dek">From 7.3M kr in the first operating year to a trailing twelve-month revenue of 49.4M kr today — six straight years of growth, without a single down year.</p>
+
+    <div class="card">
+      <div class="chart-title-row"><span class="t">Monthly invoiced revenue, Mar 2019 – Jul 2026</span><span class="u">NOK, excl. VAT</span></div>
+      <div id="chartRevMonthly"></div>
+      <div class="legend">
+        <span class="item"><span class="ln" style="background:var(--s1)"></span>Invoiced revenue</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="chart-title-row"><span class="t">Annual revenue and year-over-year growth</span><span class="u">NOK mill.</span></div>
+      <div id="chartRevAnnual"></div>
+      <p class="sub-note" style="margin-top:10px">2026 is a partial year (January–July booked + August estimated); see section 06 for the full-year estimate.</p>
+    </div>
+
+    <div class="callout"><b>Observation:</b> The company has posted positive revenue growth every single year since founding. Growth has, however, decelerated from a CAGR above 20&nbsp;% (2020–2025) to a trailing twelve-month rate of 17.6&nbsp;% — a natural pattern as the revenue base matures, but worth pairing with a new-logo target in section 06.</p>
+  </section>
+
+  <!-- ===================== 02 PROFITABILITY ===================== -->
+  <section class="rep" id="s2">
+    <div class="sec-head"><span class="sec-num">02</span><h2 class="sec-title">Profitability</h2></div>
+    <p class="sec-dek">Operating result (EBITDA) has been positive in the vast majority of months since late 2019, but the margin swings with a clear seasonal pattern: every year, results drop sharply in June when statutory holiday pay is disbursed.</p>
+
+    <div class="card">
+      <div class="chart-title-row"><span class="t">Cost structure as a share of revenue, by year</span><span class="u">% of revenue</span></div>
+      <div id="chartCostStructure"></div>
+      <div class="legend">
+        <span class="item"><span class="sw" style="background:var(--s1)"></span>Cost of delivery (COGS)</span>
+        <span class="item"><span class="sw" style="background:var(--s2)"></span>Payroll &amp; personnel cost</span>
+        <span class="item"><span class="sw" style="background:var(--s3)"></span>Other operating costs</span>
+        <span class="item"><span class="sw" style="background:var(--s4)"></span>EBITDA</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="chart-title-row"><span class="t">EBITDA margin by month</span><span class="u">%</span></div>
+      <div id="chartMargin"></div>
+      <p class="sub-note" style="margin-top:10px">The recurring June troughs (−5 to −7&nbsp;% margin) coincide with the booking of statutory holiday pay (the 5,900-series payroll accounts) — not an operating problem, but a predictable cash-flow load to plan liquidity around.</p>
+    </div>
+
+    <div class="card">
+      <h3 class="sub">Cost lines, cumulative 2019–2026 (posted to the general ledger)</h3>
+      <p class="sub-note">The three largest cost lines account for 87&nbsp;% of all booked operating costs.</p>
+      <div class="wide-scroll">
+      <table class="dt">
+        <thead><tr><th>Account</th><th>Cost type</th><th class="num">Total 2019–2026 (NOK)</th><th class="num">Share</th></tr></thead>
+        <tbody id="tblExpense"></tbody>
+      </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 03 CUSTOMERS ===================== -->
+  <section class="rep" id="s3">
+    <div class="sec-head"><span class="sec-num">03</span><h2 class="sec-title">Customers &amp; portfolio</h2></div>
+    <p class="sec-dek">50 customers have been on the books over the portfolio's lifetime; 48 are still active. Revenue is heavily weighted toward the largest Enterprise accounts and toward two industries — metal manufacturing and power/energy.</p>
+
+    <div class="card">
+      <h3 class="sub">Revenue by customer segment</h3>
+      <p class="sub-note">15 Enterprise customers account for 61&nbsp;% of all revenue in the company's history, with 18 mid-market and 17 SMB customers making up the rest.</p>
+      <div id="chartSegmentShare"></div>
+      <div class="legend" id="segmentLegend"></div>
+    </div>
+
+    <div class="card-row">
+      <div class="card">
+        <div class="chart-title-row"><span class="t">Top 10 customers, total revenue</span><span class="u">NOK mill.</span></div>
+        <div id="chartTopCustomers"></div>
+      </div>
+      <div class="card">
+        <div class="chart-title-row"><span class="t">Revenue by service line</span><span class="u">NOK mill.</span></div>
+        <div id="chartServiceLine"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="chart-title-row"><span class="t">Revenue by customer industry (NACE), top 10</span><span class="u">NOK mill.</span></div>
+      <div id="chartNace"></div>
+    </div>
+
+    <div class="callout"><b>Concentration risk:</b> The 5 largest customers alone account for 48&nbsp;% of all historical revenue, and "Metal structure manufacturing" and "Electricity trading" together make up 46&nbsp;% of revenue at the industry level. Losing a single large Enterprise account would be felt company-wide — see the diversification targets in section 06.</p>
+
+    <div class="card">
+      <h3 class="sub">Customer churn</h3>
+      <p class="sub-note">Only 2 of 50 customers have terminated their contract over the portfolio's lifetime — both in the SMB segment.</p>
+      <table class="dt">
+        <thead><tr><th>Customer</th><th>Segment</th><th>Customer since</th><th>Ended</th><th class="num">Tenure</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Vestfold Handel AS</td><td>SMB</td><td>Feb 2021</td><td>Nov 2024</td><td class="num">3y 9m</td></tr>
+          <tr><td class="name">Moss Elektro AS</td><td>SMB</td><td>Apr 2023</td><td>Oct 2025</td><td class="num">2y 6m</td></tr>
+        </tbody>
+      </table>
+      <p class="sub-note" style="margin-top:10px">Gross churn equals 4&nbsp;% of all customers ever onboarded — very low churn overall, but the SMB segment is the only one with observed attrition and merits its own retention target.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 04 PEOPLE ===================== -->
+  <section class="rep" id="s4">
+    <div class="sec-head"><span class="sec-num">04</span><h2 class="sec-title">People &amp; delivery</h2></div>
+    <p class="sec-dek">Headcount has grown from 6 to 38 employees, with the single largest hiring wave in September 2022 (+6 people). Utilization has steadily improved but still sits below typical MSP industry levels.</p>
+
+    <div class="card-row">
+      <div class="card">
+        <div class="chart-title-row"><span class="t">Headcount over time</span><span class="u">employees</span></div>
+        <div id="chartHeadcount"></div>
+      </div>
+      <div class="card">
+        <div class="chart-title-row"><span class="t">Billable share of hours, by year</span><span class="u">%</span></div>
+        <div id="chartUtilization"></div>
+      </div>
+    </div>
+
+    <div class="card-row">
+      <div class="card">
+        <h3 class="sub">Employees by department</h3>
+        <table class="dt">
+          <thead><tr><th>Department</th><th class="num">Employees</th><th class="num">Share</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Delivery</td><td class="num">19</td><td class="num">50&nbsp;%</td></tr>
+            <tr><td class="name">Technology</td><td class="num">13</td><td class="num">34&nbsp;%</td></tr>
+            <tr><td class="name">Sales</td><td class="num">3</td><td class="num">8&nbsp;%</td></tr>
+            <tr><td class="name">Finance</td><td class="num">3</td><td class="num">8&nbsp;%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3 class="sub">Productivity KPIs (trailing 12 months)</h3>
+        <table class="dt">
+          <thead><tr><th>KPI</th><th class="num">Value</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Revenue per employee</td><td class="num">1.30M kr</td></tr>
+            <tr><td class="name">Billable hour share (2026 YTD)</td><td class="num">44.0&nbsp;%</td></tr>
+            <tr><td class="name">Headcount</td><td class="num">38</td></tr>
+            <tr><td class="name">Net headcount added, last 12 mo.</td><td class="num">+8</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout"><b>Capacity observation:</b> Billable share rose from 20&nbsp;% (2019) to 48&nbsp;% (2025), then slipped back to 44&nbsp;% so far in 2026 — likely because this year's headcount growth (+8) has temporarily run ahead of demand growth. A typical MSP target sits at 65–75&nbsp;% utilization; this is the company's clearest internal improvement area.</p>
+  </section>
+
+  <!-- ===================== 05 CASH & RISK ===================== -->
+  <section class="rep" id="s5">
+    <div class="sec-head"><span class="sec-num">05</span><h2 class="sec-title">Cash &amp; risk</h2></div>
+    <p class="sec-dek">Bank transactions show a healthy net cash flow over the period, but a small number of overdue and written-off receivables deserve closer follow-up.</p>
+
+    <div class="card-row">
+      <div class="card">
+        <h3 class="sub">Bank activity, cumulative 2019–2026</h3>
+        <table class="dt">
+          <thead><tr><th>Type</th><th class="num">Count</th><th class="num">Total (NOK)</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Customer payments in</td><td class="num">1,264</td><td class="num">187.6M</td></tr>
+            <tr><td class="name">Payments out (payroll, suppliers, tax)</td><td class="num">719</td><td class="num">17.5M</td></tr>
+          </tbody>
+        </table>
+        <p class="sub-note" style="margin-top:10px">The gap reflects that a large share of costs (payroll, employer's payroll tax) is still settled against dedicated tax-withholding and settlement accounts in the ledger, not only the operating account.</p>
+      </div>
+      <div class="card">
+        <h3 class="sub">Overdue &amp; written-off receivables</h3>
+        <table class="dt">
+          <thead><tr><th>Status</th><th class="num">Orders</th><th class="num">Total (NOK, incl. VAT)</th></tr></thead>
+          <tbody id="tblAR"></tbody>
+        </table>
+        <p class="sub-note" style="margin-top:10px">5.6M kr — equal to 11&nbsp;% of trailing twelve-month revenue — sits as overdue or written off across the company's history, concentrated on a small number of Enterprise accounts (Nordkraft Energi, Innlandet Helse and Rogaland Teknikk recur most often).</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="sub">Supplier exposure</h3>
+      <p class="sub-note">Eight suppliers in total; the three largest account for 45&nbsp;% of all supplier spend.</p>
+      <table class="dt">
+        <thead><tr><th>Supplier</th><th class="num">Invoices</th><th class="num">Total (NOK)</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Statsbygg</td><td class="num">91</td><td class="num">5,118,750</td></tr>
+          <tr><td class="name">Microsoft Norge AS</td><td class="num">273</td><td class="num">2,275,140</td></tr>
+          <tr><td class="name">Avis Norge AS</td><td class="num">90</td><td class="num">2,250,875</td></tr>
+          <tr><td class="name">Telenor Norge AS</td><td class="num">91</td><td class="num">2,042,680</td></tr>
+          <tr><td class="name">Advokatfirma Thommessen</td><td class="num">30</td><td class="num">1,686,778</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== 06 FORECAST ===================== -->
+  <section class="rep" id="s6">
+    <div class="sec-head"><span class="sec-num">06</span><h2 class="sec-title">Forecast &amp; targets</h2></div>
+    <p class="sec-dek">The projection is a simple linear trend based on the last 24 booked months, not a guarantee. It is used here as a sober starting point for setting concrete targets for the rest of 2026 and for 2027.</p>
+
+    <div class="card">
+      <div class="chart-title-row"><span class="t">Revenue: history and projection to Dec 2027</span><span class="u">NOK, excl. VAT</span></div>
+      <div id="chartForecast"></div>
+      <div class="legend">
+        <span class="item"><span class="ln" style="background:var(--s1)"></span>Booked revenue</span>
+        <span class="item"><span class="dash" style="color:var(--accent-ink)"></span>Trend projection</span>
+      </div>
+      <p class="sub-note" style="margin-top:10px">Model: linear regression on the last 24 months of booked revenue (Sep 2024–Jul 2026), projected forward month by month. August 2026 is excluded from the regression base because only 17 days of the month are booked at report time.</p>
+    </div>
+
+    <h3 class="sub" style="margin-top:6px">Recommended targets</h3>
+    <p class="sub-note">Based on trend, seasonal pattern and the improvement areas observed above.</p>
+    <div class="target-grid">
+      <div class="target-card">
+        <div class="tc-label">FY2026 revenue</div>
+        <div class="tc-now">Trend: 52.4M kr</div>
+        <div class="tc-target">53–55M kr</div>
+        <div class="tc-how">+18–23&nbsp;% vs. 2025. Requires the Q4 pace (Oct–Dec) to hold the April–July run rate (&gt;4.4M/mo) without a repeat of a June-sized dip.</div>
+      </div>
+      <div class="target-card">
+        <div class="tc-label">FY2027 revenue</div>
+        <div class="tc-now">Trend: 59.6M kr</div>
+        <div class="tc-target">63–66M kr</div>
+        <div class="tc-how">Requires 6–8 new mid-market/Enterprise logos beyond organic growth in the existing portfolio — one new Enterprise-tier account is worth roughly 2 average new deals.</div>
+      </div>
+      <div class="target-card">
+        <div class="tc-label">EBITDA margin</div>
+        <div class="tc-now">Trailing 12 mo.: 7.6&nbsp;%</div>
+        <div class="tc-target">10–12&nbsp;% by Q4 2027</div>
+        <div class="tc-how">Driven primarily by better utilization (see below) and continued scale economies in "Managed IT Support delivery cost" per customer.</div>
+      </div>
+      <div class="target-card">
+        <div class="tc-label">Billable hour share</div>
+        <div class="tc-now">2026 YTD: 44.0&nbsp;%</div>
+        <div class="tc-target">55&nbsp;% by end of 2027</div>
+        <div class="tc-how">Headcount growth should now be temporarily throttled relative to demand, or the new-sales pace increased to absorb the capacity already built.</div>
+      </div>
+      <div class="target-card">
+        <div class="tc-label">Customer concentration</div>
+        <div class="tc-now">Top 5 today: 48.3&nbsp;% of revenue</div>
+        <div class="tc-target">&lt;40&nbsp;% by end of 2027</div>
+        <div class="tc-how">Not by slowing Enterprise growth, but by growing the mid-market/SMB base faster — those segments together account for only 39&nbsp;% of total revenue today.</div>
+      </div>
+      <div class="target-card">
+        <div class="tc-label">Overdue receivables</div>
+        <div class="tc-now">Historical: 5.6M kr (11&nbsp;% of TTM revenue)</div>
+        <div class="tc-target">&lt;5&nbsp;% of trailing revenue</div>
+        <div class="tc-how">Close follow-up on the 3–4 accounts (Nordkraft Energi, Innlandet Helse, Rogaland Teknikk, among others) that recur on the overdue/write-off list.</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:26px"><b>Methodology note:</b> The forecast is deliberately simple — a linear trend with no seasonal adjustment — to avoid false precision. It has historically tracked well over a 1–2 quarter horizon, but should be revised quarterly against actual booked revenue, especially around June (holiday pay) and around large single contracts such as Bergström Industri or Nordkraft Energi.</p>
+  </section>
+
+  <footer class="rep">
+    <p>This report was generated directly from the company's operations database (orders, general ledger, payroll and time tracking) on 17 August 2026. All amounts are in Norwegian kroner. Revenue figures are drawn from invoiced order lines; cost figures from booked postings by account class. The forecast in section 06 is a simple trend projection and carries no guarantee of actual outcomes.</p>
+  </footer>
+</div>
+
+<script id="report-data" type="application/json">
+{"pnl_monthly": [{"m": "2019-01", "rev": 0, "cogs": 0, "payroll": 83673, "opex": 154106, "ebitda": -237779, "partial": false}, {"m": "2019-02", "rev": 0, "cogs": 0, "payroll": 228200, "opex": 122907, "ebitda": -351107, "partial": false}, {"m": "2019-03", "rev": 238572, "cogs": 138600, "payroll": 368923, "opex": 179404, "ebitda": -448355, "partial": false}, {"m": "2019-04", "rev": 284104, "cogs": 136800, "payroll": 446892, "opex": 178265, "ebitda": -477852, "partial": false}, {"m": "2019-05", "rev": 480236, "cogs": 150000, "payroll": 446892, "opex": 115227, "ebitda": -231882, "partial": false}, {"m": "2019-06", "rev": 595478, "cogs": 218700, "payroll": 446892, "opex": 165798, "ebitda": -235913, "partial": false}, {"m": "2019-07", "rev": 595478, "cogs": 243900, "payroll": 446892, "opex": 165156, "ebitda": -260470, "partial": false}, {"m": "2019-08", "rev": 815477, "cogs": 263000, "payroll": 446892, "opex": 125980, "ebitda": -20395, "partial": false}, {"m": "2019-09", "rev": 939722, "cogs": 336000, "payroll": 446892, "opex": 188737, "ebitda": -31907, "partial": false}, {"m": "2019-10", "rev": 939722, "cogs": 380500, "payroll": 446892, "opex": 154822, "ebitda": -42493, "partial": false}, {"m": "2019-11", "rev": 1186460, "cogs": 376000, "payroll": 446892, "opex": 145034, "ebitda": 218534, "partial": false}, {"m": "2019-12", "rev": 1231258, "cogs": 376000, "payroll": 446892, "opex": 164496, "ebitda": 243871, "partial": false}, {"m": "2020-01", "rev": 1351772, "cogs": 442420, "payroll": 446892, "opex": 165794, "ebitda": 296667, "partial": false}, {"m": "2020-02", "rev": 1351772, "cogs": 426420, "payroll": 446892, "opex": 129032, "ebitda": 349428, "partial": false}, {"m": "2020-03", "rev": 1351772, "cogs": 426420, "payroll": 585713, "opex": 189022, "ebitda": 150617, "partial": false}, {"m": "2020-04", "rev": 1515524, "cogs": 490860, "payroll": 585713, "opex": 157821, "ebitda": 281130, "partial": false}, {"m": "2020-05", "rev": 1481604, "cogs": 465560, "payroll": 585713, "opex": 120852, "ebitda": 309478, "partial": false}, {"m": "2020-06", "rev": 1508686, "cogs": 465560, "payroll": 703161, "opex": 158627, "ebitda": 181338, "partial": false}, {"m": "2020-07", "rev": 1481604, "cogs": 465560, "payroll": 599120, "opex": 171683, "ebitda": 245241, "partial": false}, {"m": "2020-08", "rev": 1530570, "cogs": 479259, "payroll": 599120, "opex": 132330, "ebitda": 319861, "partial": false}, {"m": "2020-09", "rev": 1530570, "cogs": 479259, "payroll": 599120, "opex": 178519, "ebitda": 273672, "partial": false}, {"m": "2020-10", "rev": 1563336, "cogs": 479259, "payroll": 599120, "opex": 157506, "ebitda": 327451, "partial": false}, {"m": "2020-11", "rev": 1572757, "cogs": 479259, "payroll": 599120, "opex": 119186, "ebitda": 375191, "partial": false}, {"m": "2020-12", "rev": 1530570, "cogs": 479259, "payroll": 599120, "opex": 161300, "ebitda": 290890, "partial": false}, {"m": "2021-01", "rev": 1576487, "cogs": 493637, "payroll": 599120, "opex": 169455, "ebitda": 314275, "partial": false}, {"m": "2021-02", "rev": 1631419, "cogs": 507747, "payroll": 599120, "opex": 129768, "ebitda": 394784, "partial": false}, {"m": "2021-03", "rev": 1631419, "cogs": 507747, "payroll": 599120, "opex": 215640, "ebitda": 308911, "partial": false}, {"m": "2021-04", "rev": 1631419, "cogs": 507747, "payroll": 599120, "opex": 161685, "ebitda": 362867, "partial": false}, {"m": "2021-05", "rev": 1631419, "cogs": 507747, "payroll": 599120, "opex": 121800, "ebitda": 402751, "partial": false}, {"m": "2021-06", "rev": 1721765, "cogs": 507747, "payroll": 950978, "opex": 160910, "ebitda": 102130, "partial": false}, {"m": "2021-07", "rev": 1631419, "cogs": 507747, "payroll": 748309, "opex": 164938, "ebitda": 210425, "partial": false}, {"m": "2021-08", "rev": 1631419, "cogs": 507747, "payroll": 748309, "opex": 129074, "ebitda": 246290, "partial": false}, {"m": "2021-09", "rev": 1684333, "cogs": 521857, "payroll": 748309, "opex": 190346, "ebitda": 223822, "partial": false}, {"m": "2021-10", "rev": 1709758, "cogs": 521857, "payroll": 748309, "opex": 157357, "ebitda": 282235, "partial": false}, {"m": "2021-11", "rev": 1731496, "cogs": 521857, "payroll": 748309, "opex": 127659, "ebitda": 333671, "partial": false}, {"m": "2021-12", "rev": 1710213, "cogs": 521857, "payroll": 748309, "opex": 159283, "ebitda": 280764, "partial": false}, {"m": "2022-01", "rev": 1734863, "cogs": 537512, "payroll": 748309, "opex": 167769, "ebitda": 281273, "partial": false}, {"m": "2022-02", "rev": 1734863, "cogs": 537512, "payroll": 748309, "opex": 135871, "ebitda": 313171, "partial": false}, {"m": "2022-03", "rev": 1734863, "cogs": 552046, "payroll": 748309, "opex": 189862, "ebitda": 244647, "partial": false}, {"m": "2022-04", "rev": 1763784, "cogs": 552046, "payroll": 748309, "opex": 158523, "ebitda": 304906, "partial": false}, {"m": "2022-05", "rev": 1734863, "cogs": 552046, "payroll": 748309, "opex": 123179, "ebitda": 311330, "partial": false}, {"m": "2022-06", "rev": 1769394, "cogs": 552046, "payroll": 1006887, "opex": 185382, "ebitda": 25080, "partial": false}, {"m": "2022-07", "rev": 1734863, "cogs": 552046, "payroll": 770759, "opex": 172958, "ebitda": 239101, "partial": false}, {"m": "2022-08", "rev": 1734863, "cogs": 552046, "payroll": 770759, "opex": 132778, "ebitda": 279281, "partial": false}, {"m": "2022-09", "rev": 2305168, "cogs": 880181, "payroll": 1162502, "opex": 210273, "ebitda": 52212, "partial": false}, {"m": "2022-10", "rev": 2327360, "cogs": 731581, "payroll": 1252832, "opex": 168821, "ebitda": 174126, "partial": false}, {"m": "2022-11", "rev": 2414635, "cogs": 731581, "payroll": 1252832, "opex": 133872, "ebitda": 296351, "partial": false}, {"m": "2022-12", "rev": 2305168, "cogs": 731581, "payroll": 1252832, "opex": 155756, "ebitda": 164999, "partial": false}, {"m": "2023-01", "rev": 2374323, "cogs": 820428, "payroll": 1252832, "opex": 194404, "ebitda": 106659, "partial": false}, {"m": "2023-02", "rev": 2497148, "cogs": 864441, "payroll": 1252832, "opex": 142316, "ebitda": 237559, "partial": false}, {"m": "2023-03", "rev": 2532514, "cogs": 880711, "payroll": 1252832, "opex": 203507, "ebitda": 195465, "partial": false}, {"m": "2023-04", "rev": 2583743, "cogs": 880711, "payroll": 1252832, "opex": 173393, "ebitda": 276807, "partial": false}, {"m": "2023-05", "rev": 2539795, "cogs": 978380, "payroll": 1252832, "opex": 137527, "ebitda": 171056, "partial": false}, {"m": "2023-06", "rev": 2761052, "cogs": 980093, "payroll": 1575801, "opex": 176789, "ebitda": 28369, "partial": false}, {"m": "2023-07", "rev": 2690290, "cogs": 1009093, "payroll": 1290417, "opex": 183205, "ebitda": 207575, "partial": false}, {"m": "2023-08", "rev": 2697487, "cogs": 1022862, "payroll": 1290417, "opex": 148535, "ebitda": 235673, "partial": false}, {"m": "2023-09", "rev": 2697487, "cogs": 1064332, "payroll": 1290417, "opex": 175684, "ebitda": 167054, "partial": false}, {"m": "2023-10", "rev": 2735686, "cogs": 1080601, "payroll": 1290417, "opex": 171386, "ebitda": 193281, "partial": false}, {"m": "2023-11", "rev": 2735686, "cogs": 1158101, "payroll": 1290417, "opex": 141972, "ebitda": 145196, "partial": false}, {"m": "2023-12", "rev": 2926369, "cogs": 1165014, "payroll": 1290417, "opex": 183837, "ebitda": 287101, "partial": false}, {"m": "2024-01", "rev": 2975127, "cogs": 1230565, "payroll": 1290417, "opex": 182382, "ebitda": 271763, "partial": false}, {"m": "2024-02", "rev": 2981691, "cogs": 1244017, "payroll": 1290417, "opex": 150451, "ebitda": 296806, "partial": false}, {"m": "2024-03", "rev": 2981691, "cogs": 1319235, "payroll": 1290417, "opex": 192001, "ebitda": 180037, "partial": false}, {"m": "2024-04", "rev": 3242621, "cogs": 1380681, "payroll": 1290417, "opex": 175056, "ebitda": 396468, "partial": false}, {"m": "2024-05", "rev": 3217441, "cogs": 1390433, "payroll": 1290417, "opex": 144591, "ebitda": 392000, "partial": false}, {"m": "2024-06", "rev": 3228291, "cogs": 1405852, "payroll": 1831136, "opex": 224481, "ebitda": -233178, "partial": false}, {"m": "2024-07", "rev": 3280474, "cogs": 1578516, "payroll": 1329128, "opex": 185289, "ebitda": 187542, "partial": false}, {"m": "2024-08", "rev": 3280474, "cogs": 1508216, "payroll": 1329128, "opex": 160155, "ebitda": 282976, "partial": false}, {"m": "2024-09", "rev": 3287478, "cogs": 1508216, "payroll": 1329128, "opex": 223029, "ebitda": 227106, "partial": false}, {"m": "2024-10", "rev": 3354202, "cogs": 1550934, "payroll": 1329128, "opex": 182002, "ebitda": 292138, "partial": false}, {"m": "2024-11", "rev": 3382288, "cogs": 1599786, "payroll": 1329128, "opex": 155270, "ebitda": 298104, "partial": false}, {"m": "2024-12", "rev": 3326354, "cogs": 1596320, "payroll": 1329128, "opex": 176717, "ebitda": 224188, "partial": false}, {"m": "2025-01", "rev": 3445941, "cogs": 1698510, "payroll": 1329128, "opex": 192330, "ebitda": 225974, "partial": false}, {"m": "2025-02", "rev": 3533819, "cogs": 1749645, "payroll": 1329128, "opex": 154926, "ebitda": 300121, "partial": false}, {"m": "2025-03", "rev": 3533819, "cogs": 1749645, "payroll": 1329128, "opex": 226995, "ebitda": 228051, "partial": false}, {"m": "2025-04", "rev": 3737090, "cogs": 1765526, "payroll": 1329128, "opex": 181998, "ebitda": 460438, "partial": false}, {"m": "2025-05", "rev": 3698121, "cogs": 1765526, "payroll": 1329128, "opex": 149616, "ebitda": 453851, "partial": false}, {"m": "2025-06", "rev": 3746796, "cogs": 1840426, "payroll": 1886072, "opex": 219332, "ebitda": -199034, "partial": false}, {"m": "2025-07", "rev": 3703078, "cogs": 1886680, "payroll": 1369003, "opex": 195295, "ebitda": 252100, "partial": false}, {"m": "2025-08", "rev": 3744950, "cogs": 1926754, "payroll": 1369003, "opex": 162516, "ebitda": 286678, "partial": false}, {"m": "2025-09", "rev": 3752163, "cogs": 1945828, "payroll": 1369003, "opex": 195252, "ebitda": 242080, "partial": false}, {"m": "2025-10", "rev": 3828380, "cogs": 2038809, "payroll": 1369003, "opex": 184721, "ebitda": 235847, "partial": false}, {"m": "2025-11", "rev": 4058768, "cogs": 2064782, "payroll": 1369003, "opex": 160998, "ebitda": 463985, "partial": false}, {"m": "2025-12", "rev": 4059729, "cogs": 2080756, "payroll": 1369003, "opex": 176861, "ebitda": 433109, "partial": false}, {"m": "2026-01", "rev": 4022008, "cogs": 2205736, "payroll": 1369003, "opex": 192871, "ebitda": 254399, "partial": false}, {"m": "2026-02", "rev": 4153018, "cogs": 2276576, "payroll": 1369003, "opex": 166426, "ebitda": 341012, "partial": false}, {"m": "2026-03", "rev": 4202342, "cogs": 2298511, "payroll": 1369003, "opex": 202650, "ebitda": 332178, "partial": false}, {"m": "2026-04", "rev": 4365422, "cogs": 2314869, "payroll": 1369003, "opex": 187058, "ebitda": 494492, "partial": false}, {"m": "2026-05", "rev": 4496620, "cogs": 2404026, "payroll": 1369003, "opex": 158078, "ebitda": 565513, "partial": false}, {"m": "2026-06", "rev": 4568508, "cogs": 2439166, "payroll": 1942656, "opex": 204386, "ebitda": -17700, "partial": false}, {"m": "2026-07", "rev": 4155289, "cogs": 2470202, "payroll": 1410073, "opex": 164027, "ebitda": 110987, "partial": false}, {"m": "2026-08", "rev": 2355986, "cogs": 0, "payroll": 0, "opex": 0, "ebitda": 2355986, "partial": true}], "annual_revenue": [{"yr": 2019, "rev": 7306506}, {"yr": 2020, "rev": 17770538}, {"yr": 2021, "rev": 19922564}, {"yr": 2022, "rev": 23294689}, {"yr": 2023, "rev": 31771579}, {"yr": 2024, "rev": 38538133}, {"yr": 2025, "rev": 44842653}, {"yr": 2026, "rev": 32319194}], "headcount_monthly": [{"m": "2019-01", "hc": 0}, {"m": "2019-02", "hc": 6}, {"m": "2019-03", "hc": 6}, {"m": "2019-04", "hc": 6}, {"m": "2019-05", "hc": 6}, {"m": "2019-06", "hc": 6}, {"m": "2019-07", "hc": 6}, {"m": "2019-08", "hc": 6}, {"m": "2019-09", "hc": 6}, {"m": "2019-10", "hc": 6}, {"m": "2019-11", "hc": 6}, {"m": "2019-12", "hc": 6}, {"m": "2020-01", "hc": 6}, {"m": "2020-02", "hc": 6}, {"m": "2020-03", "hc": 8}, {"m": "2020-04", "hc": 8}, {"m": "2020-05", "hc": 8}, {"m": "2020-06", "hc": 8}, {"m": "2020-07", "hc": 8}, {"m": "2020-08", "hc": 8}, {"m": "2020-09", "hc": 8}, {"m": "2020-10", "hc": 8}, {"m": "2020-11", "hc": 8}, {"m": "2020-12", "hc": 8}, {"m": "2021-01", "hc": 8}, {"m": "2021-02", "hc": 8}, {"m": "2021-03", "hc": 8}, {"m": "2021-04", "hc": 8}, {"m": "2021-05", "hc": 8}, {"m": "2021-06", "hc": 10}, {"m": "2021-07", "hc": 10}, {"m": "2021-08", "hc": 10}, {"m": "2021-09", "hc": 10}, {"m": "2021-10", "hc": 10}, {"m": "2021-11", "hc": 10}, {"m": "2021-12", "hc": 10}, {"m": "2022-01", "hc": 10}, {"m": "2022-02", "hc": 10}, {"m": "2022-03", "hc": 10}, {"m": "2022-04", "hc": 10}, {"m": "2022-05", "hc": 10}, {"m": "2022-06", "hc": 10}, {"m": "2022-07", "hc": 10}, {"m": "2022-08", "hc": 10}, {"m": "2022-09", "hc": 16}, {"m": "2022-10", "hc": 16}, {"m": "2022-11", "hc": 17}, {"m": "2022-12", "hc": 17}, {"m": "2023-01", "hc": 18}, {"m": "2023-02", "hc": 18}, {"m": "2023-03", "hc": 19}, {"m": "2023-04", "hc": 19}, {"m": "2023-05", "hc": 20}, {"m": "2023-06", "hc": 20}, {"m": "2023-07", "hc": 21}, {"m": "2023-08", "hc": 21}, {"m": "2023-09", "hc": 22}, {"m": "2023-10", "hc": 22}, {"m": "2023-11", "hc": 23}, {"m": "2023-12", "hc": 23}, {"m": "2024-01", "hc": 24}, {"m": "2024-02", "hc": 24}, {"m": "2024-03", "hc": 25}, {"m": "2024-04", "hc": 25}, {"m": "2024-05", "hc": 26}, {"m": "2024-06", "hc": 26}, {"m": "2024-07", "hc": 27}, {"m": "2024-08", "hc": 27}, {"m": "2024-09", "hc": 28}, {"m": "2024-10", "hc": 28}, {"m": "2024-11", "hc": 29}, {"m": "2024-12", "hc": 29}, {"m": "2025-01", "hc": 30}, {"m": "2025-02", "hc": 31}, {"m": "2025-03", "hc": 31}, {"m": "2025-04", "hc": 31}, {"m": "2025-05", "hc": 32}, {"m": "2025-06", "hc": 33}, {"m": "2025-07", "hc": 33}, {"m": "2025-08", "hc": 34}, {"m": "2025-09", "hc": 34}, {"m": "2025-10", "hc": 35}, {"m": "2025-11", "hc": 35}, {"m": "2025-12", "hc": 36}, {"m": "2026-01", "hc": 36}, {"m": "2026-02", "hc": 37}, {"m": "2026-03", "hc": 37}, {"m": "2026-04", "hc": 38}, {"m": "2026-05", "hc": 38}, {"m": "2026-06", "hc": 38}, {"m": "2026-07", "hc": 38}, {"m": "2026-08", "hc": 38}], "top_customers": [{"name": "Bergström Industri AS", "seg": "Enterprise", "rev": 24173931}, {"name": "Nordkraft Energi AS", "seg": "Enterprise", "rev": 23361032}, {"name": "Rogaland Teknikk AS", "seg": "Enterprise", "rev": 22467011}, {"name": "Innlandet Helse AS", "seg": "Enterprise", "rev": 20720689}, {"name": "Grenland Energi AS", "seg": "Enterprise", "rev": 13506265}, {"name": "Fjord Logistikk AS", "seg": "Mid-market", "rev": 11750473}, {"name": "Halvorsen & Partnere AS", "seg": "Mid-market", "rev": 11253086}, {"name": "Østfold Finans AS", "seg": "Mid-market", "rev": 11179682}, {"name": "Kristiansen Gruppen AS", "seg": "Mid-market", "rev": 10858583}, {"name": "Kristiansund Transport AS", "seg": "Mid-market", "rev": 6721717}], "nace": [{"name": "Produksjon av metallkonstruksjoner", "rev": 61437395}, {"name": "Handel med elektrisitet", "rev": 37784362}, {"name": "Godstransport på vei", "rev": 21620656}, {"name": "Andre helsetjenester", "rev": 20720689}, {"name": "Bankvirksomhet ellers", "rev": 19133785}, {"name": "Juridisk tjenesteyting", "rev": 11253086}, {"name": "Hovedkontortjenester", "rev": 10858583}, {"name": "Sjøtransport med gods", "rev": 9244618}, {"name": "Oppføring av bygninger", "rev": 4908123}, {"name": "Havbruk av fisk i sjøvann", "rev": 4097385}, {"name": "Andre tjenester tilknyttet informasjonsteknologi", "rev": 3198905}, {"name": "Bedriftsrådgivning og annen administrativ rådgivning", "rev": 3081489}, {"name": "Vedlikehold og reparasjon av motorvogner", "rev": 2810595}, {"name": "Annen butikkhandel med bredt vareutvalg", "rev": 2642803}, {"name": "Kjøp og salg av egen fast eiendom", "rev": 2111636}, {"name": "Elektrisk installasjonsarbeid", "rev": 478876}, {"name": "Spesialisert designvirksomhet", "rev": 223710}, {"name": "Bearbeiding og konservering av fisk, skalldyr og bløtdyr", "rev": 159160}], "segment_totals": {"Enterprise": 132401629.14, "Mid-market": 68862077.59, "SMB": 14502149.5}, "segment_customers": {"Enterprise": 15, "Mid-market": 18, "SMB": 17}, "product_rev": [{"name": "Managed IT Support", "rev": 135686599.85}, {"name": "Zarządzanie infrastrukturą Microsoft", "rev": 53293246.95}, {"name": "Cyberbezpieczeństwo", "rev": 24077025.79}, {"name": "Konsulting i digitalizacja", "rev": 2708983.64}], "utilization": [{"yr": 2019, "billable": 988, "internal": 4021, "pct": 19.7}, {"yr": 2020, "billable": 3316, "internal": 5548, "pct": 37.4}, {"yr": 2021, "billable": 3749, "internal": 7772, "pct": 32.5}, {"yr": 2022, "billable": 4857, "internal": 11289, "pct": 30.1}, {"yr": 2023, "billable": 7878, "internal": 14671, "pct": 34.9}, {"yr": 2024, "billable": 9676, "internal": 12985, "pct": 42.7}, {"yr": 2025, "billable": 10770, "internal": 11802, "pct": 47.7}, {"yr": 2026, "billable": 7216, "internal": 9174, "pct": 44.0}], "forecast_monthly": [{"m": "2026-09", "rev": 4466587}, {"m": "2026-10", "rev": 4519125}, {"m": "2026-11", "rev": 4571664}, {"m": "2026-12", "rev": 4624202}, {"m": "2027-01", "rev": 4676740}, {"m": "2027-02", "rev": 4729278}, {"m": "2027-03", "rev": 4781816}, {"m": "2027-04", "rev": 4834354}, {"m": "2027-05", "rev": 4886892}, {"m": "2027-06", "rev": 4939431}, {"m": "2027-07", "rev": 4991969}, {"m": "2027-08", "rev": 5044507}, {"m": "2027-09", "rev": 5097045}, {"m": "2027-10", "rev": 5149583}, {"m": "2027-11", "rev": 5202121}, {"m": "2027-12", "rev": 5254659}], "aug_2026_full_estimate": 4296210, "kpi": {"trailing12_rev": 49407197, "trailing12_ebitda": 3742580, "trailing12_margin_pct": 7.6, "yoy_growth_pct": 17.6, "rev_per_employee": 1300189, "headcount_now": 38, "fy2026_estimate": 52440997, "fy2027_forecast_trend": 59588397, "top5_customer_share_pct": 48.3, "utilization_2026_pct": 44.0, "ar_overdue_total": 5626330, "cagr_2020_2025_pct": 20.3}}
+</script>
+
+<script>
+(function(){
+  const DATA = JSON.parse(document.getElementById('report-data').textContent);
+  const NS = "http://www.w3.org/2000/svg";
+  const tt = document.getElementById('tt');
+
+  function el(tag, attrs, parent){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function fmtNOK(v, opts){
+    opts = opts || {};
+    const abs = Math.abs(v);
+    let s;
+    if (opts.mill) s = (v/1e6).toLocaleString('en-US',{maximumFractionDigits:1,minimumFractionDigits:1}) + ' M';
+    else s = Math.round(v).toLocaleString('en-US');
+    return s;
+  }
+  function showTT(x, y, html){
+    tt.innerHTML = html;
+    tt.style.opacity = 1;
+    const r = tt.getBoundingClientRect();
+    let left = x + 14, top = y - r.height/2;
+    if (left + r.width > window.innerWidth - 10) left = x - r.width - 14;
+    tt.style.left = left+'px'; tt.style.top = Math.max(10,top)+'px';
+  }
+  function hideTT(){ tt.style.opacity = 0; }
+
+  // ---------------- KPI header ----------------
+  const kpiData = [
+    {label:"Trailing 12-mo. revenue", value:(DATA.kpi.trailing12_rev/1e6).toFixed(1)+" M kr", delta:"+"+DATA.kpi.yoy_growth_pct.toFixed(1)+"% YoY", cls:"up"},
+    {label:"EBITDA margin (TTM)", value:DATA.kpi.trailing12_margin_pct.toFixed(1)+"%", delta:"target 10–12% by 2027", cls:"neutral"},
+    {label:"Headcount today", value:String(DATA.kpi.headcount_now), delta:"+8 last 12 mo.", cls:"up"},
+    {label:"Revenue per employee (TTM)", value:(DATA.kpi.rev_per_employee/1e6).toFixed(2)+" M kr", delta:"", cls:"neutral"},
+    {label:"Top 5 customers' share", value:DATA.kpi.top5_customer_share_pct.toFixed(1)+"%", delta:"concentration risk", cls:"flag"},
+    {label:"Billable hour share", value:DATA.kpi.utilization_2026_pct.toFixed(1)+"%", delta:"below 65–75% MSP target", cls:"flag"},
+    {label:"Estimated FY2026 revenue", value:(DATA.kpi.fy2026_estimate/1e6).toFixed(1)+" M kr", delta:"+17% vs. 2025", cls:"up"},
+    {label:"Overdue receivables (hist.)", value:(DATA.kpi.ar_overdue_total/1e6).toFixed(1)+" M kr", delta:"11% of TTM revenue", cls:"flag"},
+  ];
+  const kpiGrid = document.getElementById('kpiGrid');
+  kpiData.forEach(k=>{
+    const d = document.createElement('div'); d.className='kpi';
+    d.innerHTML = `<div class="label">${k.label}</div><div class="value">${k.value}</div>${k.delta?`<div class="delta ${k.cls}">${k.delta}</div>`:''}`;
+    kpiGrid.appendChild(d);
+  });
+
+  // ---------------- scroll spy ----------------
+  const sections = ['s1','s2','s3','s4','s5','s6'].map(id=>document.getElementById(id));
+  const links = Array.from(document.querySelectorAll('nav.toc a'));
+  function onScroll(){
+    let idx = 0;
+    const y = window.scrollY + 120;
+    sections.forEach((s,i)=>{ if (s.offsetTop <= y) idx = i; });
+    links.forEach((l,i)=>l.classList.toggle('active', i===idx));
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // ================================================================
+  // Chart helpers
+  // ================================================================
+  function makeSvg(container, w, h, margin){
+    const svg = el('svg', {class:'chart-svg', viewBox:`0 0 ${w} ${h}`, preserveAspectRatio:'xMidYMid meet'});
+    container.appendChild(svg);
+    return svg;
+  }
+  function scaleLinear(domain, range){
+    const [d0,d1]=domain,[r0,r1]=range;
+    return v => r0 + (v-d0)/(d1-d0) * (r1-r0);
+  }
+  function niceMax(v){
+    if (v<=0) return 1;
+    const mag = Math.pow(10, Math.floor(Math.log10(v)));
+    const norm = v/mag;
+    let step;
+    if (norm<=1) step=1; else if(norm<=2) step=2; else if(norm<=5) step=5; else step=10;
+    return step*mag;
+  }
+
+  // ---- Monthly revenue line/area chart ----
+  function revenueMonthlyChart(container, rows){
+    const W=860, H=260, M={top:14,right:14,bottom:26,left:56};
+    const svg = makeSvg(container, W, H);
+    const iw = W-M.left-M.right, ih = H-M.top-M.bottom;
+    const x = scaleLinear([0, rows.length-1], [M.left, M.left+iw]);
+    const maxY = niceMax(Math.max(...rows.map(r=>r.rev))*1.08);
+    const y = scaleLinear([0, maxY], [M.top+ih, M.top]);
+
+    // gridlines
+    const ticks=4;
+    for(let i=0;i<=ticks;i++){
+      const val = maxY*i/ticks;
+      const yy = y(val);
+      el('line',{class:'gridline',x1:M.left,x2:M.left+iw,y1:yy,y2:yy},svg);
+      el('text',{class:'axis-label',x:M.left-8,y:yy+3,'text-anchor':'end'},svg).textContent = (val/1e6).toFixed(1)+'M';
+    }
+    // x labels: Jan of each year
+    rows.forEach((r,i)=>{
+      if (r.m.endsWith('-01') || i===0){
+        el('line',{class:'gridline',x1:x(i),x2:x(i),y1:M.top,y2:M.top+ih},svg);
+        el('text',{class:'axis-label',x:x(i),y:H-8,'text-anchor':'middle'},svg).textContent = r.m.slice(0,4);
+      }
+    });
+    el('line',{class:'baseline',x1:M.left,x2:M.left+iw,y1:M.top+ih,y2:M.top+ih},svg);
+
+    // area
+    let dArea = `M ${x(0)} ${y(0)} `;
+    rows.forEach((r,i)=> dArea += `L ${x(i)} ${y(r.rev)} `);
+    dArea += `L ${x(rows.length-1)} ${y(0)} Z`;
+    const gradId = 'gradRev'+Math.random().toString(36).slice(2,8);
+    const grad = el('linearGradient',{id:gradId,x1:'0',y1:'0',x2:'0',y2:'1'},svg);
+    el('stop',{offset:'0%','stop-color':'var(--s1)','stop-opacity':'0.22'},grad);
+    el('stop',{offset:'100%','stop-color':'var(--s1)','stop-opacity':'0'},grad);
+    el('path',{d:dArea, fill:`url(#${gradId})`, stroke:'none'},svg);
+
+    let dLine = '';
+    rows.forEach((r,i)=> dLine += (i===0?'M':'L') + ` ${x(i)} ${y(r.rev)} `);
+    el('path',{d:dLine, fill:'none', stroke:'var(--s1)', 'stroke-width':2, 'stroke-linecap':'round','stroke-linejoin':'round'},svg);
+
+    // hover
+    const hoverLine = el('line',{class:'gridline',x1:0,x2:0,y1:M.top,y2:M.top+ih,style:'display:none;stroke:var(--border-strong)'},svg);
+    const hoverDot = el('circle',{r:3.5,fill:'var(--s1)',stroke:'var(--surface)','stroke-width':1.5,style:'display:none'},svg);
+    const capture = el('rect',{x:M.left,y:M.top,width:iw,height:ih,fill:'transparent'},svg);
+    capture.addEventListener('mousemove', (ev)=>{
+      const rect = svg.getBoundingClientRect();
+      const px = (ev.clientX-rect.left) * (W/rect.width);
+      let i = Math.round((px-M.left)/iw*(rows.length-1));
+      i = Math.max(0, Math.min(rows.length-1, i));
+      const r = rows[i];
+      hoverLine.setAttribute('x1',x(i)); hoverLine.setAttribute('x2',x(i)); hoverLine.style.display='block';
+      hoverDot.setAttribute('cx',x(i)); hoverDot.setAttribute('cy',y(r.rev)); hoverDot.style.display='block';
+      showTT(ev.clientX, ev.clientY, `<div class="tt-h">${r.m}${r.partial?' (partial)':''}</div><div class="tt-row"><span class="k"><span class="sw" style="background:var(--s1)"></span>Revenue</span><span class="v">${fmtNOK(r.rev)} kr</span></div>`);
+    });
+    capture.addEventListener('mouseleave', ()=>{ hoverLine.style.display='none'; hoverDot.style.display='none'; hideTT(); });
+  }
+
+  // ---- Annual revenue bar chart ----
+  function annualBarChart(container, rows){
+    const W=860, H=230, M={top:24,right:14,bottom:26,left:50};
+    const svg = makeSvg(container, W, H);
+    const iw = W-M.left-M.right, ih = H-M.top-M.bottom;
+    const n = rows.length;
+    const bw = iw/n*0.56;
+    const x = scaleLinear([0,n-1],[M.left+iw/n*0.5, M.left+iw-iw/n*0.5]);
+    const maxY = niceMax(Math.max(...rows.map(r=>r.rev))*1.15);
+    const y = scaleLinear([0,maxY],[M.top+ih, M.top]);
+
+    for(let i=0;i<=4;i++){
+      const val = maxY*i/4, yy=y(val);
+      el('line',{class:'gridline',x1:M.left,x2:M.left+iw,y1:yy,y2:yy},svg);
+      el('text',{class:'axis-label',x:M.left-8,y:yy+3,'text-anchor':'end'},svg).textContent=(val/1e6).toFixed(0)+'M';
+    }
+    el('line',{class:'baseline',x1:M.left,x2:M.left+iw,y1:M.top+ih,y2:M.top+ih},svg);
+
+    rows.forEach((r,i)=>{
+      const bx = x(i)-bw/2, by = y(r.rev), bh = M.top+ih-by;
+      const isPartial = r.yr===2026;
+      const g = el('g',{},svg);
+      el('rect',{x:bx,y:by,width:bw,height:bh,rx:3,fill: isPartial? 'var(--surface-2)':'var(--s1)', stroke: isPartial?'var(--baseline)':'none','stroke-dasharray': isPartial?'3,3':'none'},g);
+      el('text',{class:'bar-label',x:x(i),y:by-8,'text-anchor':'middle'},g).textContent=(r.rev/1e6).toFixed(1)+'M';
+      el('text',{class:'axis-label',x:x(i),y:H-8,'text-anchor':'middle'},g).textContent = r.yr + (isPartial?' (partial)':'');
+      g.style.cursor='default';
+      g.addEventListener('mousemove',(ev)=>{
+        let growth = '';
+        const prev = rows[i-1];
+        if (prev) growth = `<div class="tt-row"><span class="k">vs. prior year</span><span class="v">${((r.rev/prev.rev-1)*100).toFixed(1)}%</span></div>`;
+        showTT(ev.clientX, ev.clientY, `<div class="tt-h">${r.yr}</div><div class="tt-row"><span class="k"><span class="sw" style="background:var(--s1)"></span>Revenue</span><span class="v">${fmtNOK(r.rev)} kr</span></div>${growth}`);
+      });
+      g.addEventListener('mouseleave', hideTT);
+    });
+  }
+
+  // ---- Cost structure 100% stacked bar per year ----
+  function costStructureChart(container, pnlRows){
+    // aggregate by year (exclude partial)
+    const byYear = {};
+    pnlRows.forEach(r=>{
+      if (r.partial) return;
+      const yr = r.m.slice(0,4);
+      byYear[yr] = byYear[yr] || {rev:0,cogs:0,payroll:0,opex:0,ebitda:0};
+      byYear[yr].rev += r.rev; byYear[yr].cogs += r.cogs; byYear[yr].payroll += r.payroll;
+      byYear[yr].opex += r.opex; byYear[yr].ebitda += r.ebitda;
+    });
+    const years = Object.keys(byYear).sort();
+    // a loss year (costs > 100% of revenue) needs headroom above the 100% line
+    const maxStackPct = Math.max(100, ...years.map(yr=>{
+      const d = byYear[yr]; const rev = d.rev||1;
+      return (d.cogs+d.payroll+d.opex)/rev*100;
+    }));
+    const domainMax = Math.ceil((maxStackPct*1.06)/10)*10;
+    const W=860, H=260, M={top:14,right:14,bottom:26,left:44};
+    const svg = makeSvg(container, W, H);
+    const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
+    const n=years.length;
+    const bw = iw/n*0.55;
+    const x = scaleLinear([0,n-1],[M.left+iw/n*0.5, M.left+iw-iw/n*0.5]);
+    const y = scaleLinear([0,domainMax],[M.top+ih, M.top]);
+    const tickStep = domainMax>100 ? 25 : 25;
+    for(let v=0; v<=domainMax; v+=tickStep){
+      const yy=y(v);
+      el('line',{class:'gridline',x1:M.left,x2:M.left+iw,y1:yy,y2:yy},svg);
+      el('text',{class:'axis-label',x:M.left-8,y:yy+3,'text-anchor':'end'},svg).textContent=v+'%';
+    }
+    el('line',{class:'baseline',x1:M.left,x2:M.left+iw,y1:M.top+ih,y2:M.top+ih},svg);
+    if (domainMax>100){
+      const y100 = y(100);
+      el('line',{x1:M.left,x2:M.left+iw,y1:y100,y2:y100,stroke:'var(--critical)','stroke-width':1,'stroke-dasharray':'3,3'},svg);
+      el('text',{x:M.left+iw,y:y100-4,'text-anchor':'end',class:'axis-label',style:'fill:var(--critical)'},svg).textContent='100% of revenue';
+    }
+
+    years.forEach((yr,i)=>{
+      const d = byYear[yr];
+      const rev = d.rev || 1;
+      const segs = [
+        {key:'cogs', v:d.cogs, color:'var(--s1)', label:'COGS'},
+        {key:'payroll', v:d.payroll, color:'var(--s2)', label:'Payroll'},
+        {key:'opex', v:d.opex, color:'var(--s3)', label:'Other opex'},
+        {key:'ebitda', v:Math.max(d.ebitda,0), color:'var(--s4)', label:'EBITDA'},
+      ];
+      let acc = 0;
+      const bx = x(i)-bw/2;
+      segs.forEach(s=>{
+        const pct = s.v/rev*100;
+        const y0 = y(acc), y1 = y(acc+pct);
+        const g = el('rect',{x:bx,y:y1,width:bw,height:Math.max(0,y0-y1-1.5),rx:2,fill:s.color},svg);
+        g.addEventListener('mousemove',(ev)=>{
+          showTT(ev.clientX, ev.clientY, `<div class="tt-h">${yr} · ${s.label}</div><div class="tt-row"><span class="v">${pct.toFixed(1)}% of revenue</span></div><div class="tt-row"><span class="v">${fmtNOK(s.v)} kr</span></div>`);
+        });
+        g.addEventListener('mouseleave', hideTT);
+        acc += pct;
+      });
+      if (d.ebitda < 0){
+        const lossPct = -d.ebitda/rev*100;
+        el('text',{class:'axis-label',x:x(i),y:y(acc)-6,'text-anchor':'middle',style:'fill:var(--critical);font-weight:600'},svg).textContent='−'+lossPct.toFixed(0)+'%';
+      }
+      el('text',{class:'axis-label',x:x(i),y:H-8,'text-anchor':'middle'},svg).textContent=yr;
+    });
+  }
+
+  // ---- EBITDA margin line chart (with zero baseline) ----
+  function marginChart(container, rows){
+    const data = rows.filter(r=>!r.partial && r.rev>0).map(r=>({m:r.m, pct: r.ebitda/r.rev*100}));
+    const W=860,H=220,M={top:14,right:14,bottom:26,left:44};
+    const svg = makeSvg(container,W,H);
+    const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
+    const x = scaleLinear([0,data.length-1],[M.left,M.left+iw]);
+    const maxAbs = Math.max(...data.map(d=>Math.abs(d.pct)))*1.15;
+    const y = scaleLinear([-maxAbs,maxAbs],[M.top+ih,M.top]);
+    [-Math.round(maxAbs*0.6/5)*5, 0, Math.round(maxAbs*0.6/5)*5].forEach(v=>{});
+    const ticks = [Math.round(-maxAbs), 0, Math.round(maxAbs)];
+    [ -Math.round(maxAbs), 0, Math.round(maxAbs) ].forEach(v=>{
+      const yy=y(v);
+      el('line',{class:'gridline',x1:M.left,x2:M.left+iw,y1:yy,y2:yy},svg);
+      el('text',{class:'axis-label',x:M.left-8,y:yy+3,'text-anchor':'end'},svg).textContent=v+'%';
+    });
+    const yZero = y(0);
+    el('line',{class:'baseline',x1:M.left,x2:M.left+iw,y1:yZero,y2:yZero},svg);
+    data.forEach((r,i)=>{
+      if (r.m.endsWith('-01')){
+        el('text',{class:'axis-label',x:x(i),y:H-8,'text-anchor':'middle'},svg).textContent=r.m.slice(0,4);
+      }
+    });
+    let d = '';
+    data.forEach((r,i)=> d += (i===0?'M':'L') + ` ${x(i)} ${y(r.pct)} `);
+    el('path',{d, fill:'none', stroke:'var(--s2)', 'stroke-width':2, 'stroke-linecap':'round','stroke-linejoin':'round'},svg);
+
+    const hoverLine = el('line',{class:'gridline',x1:0,x2:0,y1:M.top,y2:M.top+ih,style:'display:none;stroke:var(--border-strong)'},svg);
+    const hoverDot = el('circle',{r:3.5,fill:'var(--s2)',stroke:'var(--surface)','stroke-width':1.5,style:'display:none'},svg);
+    const capture = el('rect',{x:M.left,y:M.top,width:iw,height:ih,fill:'transparent'},svg);
+    capture.addEventListener('mousemove',(ev)=>{
+      const rect=svg.getBoundingClientRect();
+      const px=(ev.clientX-rect.left)*(W/rect.width);
+      let i=Math.round((px-M.left)/iw*(data.length-1));
+      i=Math.max(0,Math.min(data.length-1,i));
+      const r=data[i];
+      hoverLine.setAttribute('x1',x(i));hoverLine.setAttribute('x2',x(i));hoverLine.style.display='block';
+      hoverDot.setAttribute('cx',x(i));hoverDot.setAttribute('cy',y(r.pct));hoverDot.style.display='block';
+      showTT(ev.clientX,ev.clientY,`<div class="tt-h">${r.m}</div><div class="tt-row"><span class="k"><span class="sw" style="background:var(--s2)"></span>EBITDA margin</span><span class="v">${r.pct.toFixed(1)}%</span></div>`);
+    });
+    capture.addEventListener('mouseleave',()=>{hoverLine.style.display='none';hoverDot.style.display='none';hideTT();});
+  }
+
+  // ---- Horizontal bar chart (generic) ----
+  function hBarChart(container, rows, opts){
+    opts = opts||{};
+    const n = rows.length;
+    const rowH = 30, W=860, M={top:6,right:70,bottom:6,left:opts.leftLabel||190};
+    const H = n*rowH + M.top+M.bottom;
+    const svg = makeSvg(container, W, H);
+    const iw = W-M.left-M.right;
+    const maxV = niceMax(Math.max(...rows.map(r=>r.v))*1.05);
+    const x = scaleLinear([0,maxV],[M.left, M.left+iw]);
+    rows.forEach((r,i)=>{
+      const yy = M.top + i*rowH;
+      const bh = rowH*0.56;
+      const by = yy + (rowH-bh)/2;
+      el('text',{class:'axis-label',x:M.left-10,y:yy+rowH/2+3,'text-anchor':'end', style:'fill:var(--ink-2)'},svg).textContent = r.label.length>28? r.label.slice(0,27)+'…':r.label;
+      const bg = el('rect',{x:M.left,y:by,width:iw,height:bh,rx:3,fill:'var(--surface-2)'},svg);
+      const bar = el('rect',{x:M.left,y:by,width:x(r.v)-M.left,height:bh,rx:3,fill:r.color||'var(--s1)'},svg);
+      const label = el('text',{class:'bar-label',x:x(r.v)+8,y:yy+rowH/2+3,'text-anchor':'start'},svg);
+      label.textContent = opts.mill ? (r.v/1e6).toFixed(1)+'M' : fmtNOK(r.v);
+      [bar,bg].forEach(node=>{
+        node.addEventListener('mousemove',(ev)=>{
+          showTT(ev.clientX,ev.clientY,`<div class="tt-h">${r.label}</div><div class="tt-row"><span class="v">${fmtNOK(r.v)} kr</span></div>${r.extra||''}`);
+        });
+        node.addEventListener('mouseleave', hideTT);
+      });
+    });
+  }
+
+  // ---- Segment share bar (single 100% stacked horizontal bar) ----
+  function segmentShareChart(container, totals, counts){
+    const order = ['Enterprise','Mid-market','SMB'];
+    const colors = {'Enterprise':'var(--s1)','Mid-market':'var(--s2)','SMB':'var(--s3)'};
+    const sum = order.reduce((a,k)=>a+totals[k],0);
+    const W=860,H=64,M={top:8,right:8,bottom:8,left:8};
+    const svg = makeSvg(container,W,H);
+    const iw=W-M.left-M.right;
+    let acc = M.left;
+    order.forEach(k=>{
+      const w = totals[k]/sum*iw;
+      const g = el('rect',{x:acc,y:M.top,width:Math.max(0,w-2),height:H-M.top-M.bottom,rx:4,fill:colors[k]},svg);
+      if (w>60){
+        el('text',{x:acc+w/2,y:M.top+(H-M.top-M.bottom)/2+4,'text-anchor':'middle',style:'fill:white;font-family:var(--font-mono);font-size:12px;font-weight:600'},svg).textContent=(totals[k]/sum*100).toFixed(0)+'%';
+      }
+      g.addEventListener('mousemove',(ev)=>{
+        showTT(ev.clientX,ev.clientY,`<div class="tt-h">${k} · ${counts[k]} customers</div><div class="tt-row"><span class="v">${fmtNOK(totals[k])} kr</span></div><div class="tt-row"><span class="v">${(totals[k]/sum*100).toFixed(1)}% of revenue</span></div>`);
+      });
+      g.addEventListener('mouseleave', hideTT);
+      acc += w;
+    });
+    // legend build
+    const legend = document.getElementById('segmentLegend');
+    order.forEach(k=>{
+      const item = document.createElement('span'); item.className='item';
+      const sw = document.createElement('span'); sw.className='sw'; sw.style.background = colors[k];
+      item.appendChild(sw);
+      item.appendChild(document.createTextNode(`${k} — ${counts[k]} customers, ${(totals[k]/1e6).toFixed(1)} M kr`));
+      legend.appendChild(item);
+    });
+  }
+
+  // ---- Headcount step chart ----
+  function headcountChart(container, rows){
+    const W=420,H=220,M={top:14,right:10,bottom:26,left:34};
+    const svg=makeSvg(container,W,H);
+    const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
+    const x=scaleLinear([0,rows.length-1],[M.left,M.left+iw]);
+    const maxY=niceMax(Math.max(...rows.map(r=>r.hc))*1.15);
+    const y=scaleLinear([0,maxY],[M.top+ih,M.top]);
+    [0,0.5,1].forEach(f=>{
+      const val=maxY*f, yy=y(val);
+      el('line',{class:'gridline',x1:M.left,x2:M.left+iw,y1:yy,y2:yy},svg);
+      el('text',{class:'axis-label',x:M.left-6,y:yy+3,'text-anchor':'end'},svg).textContent=Math.round(val);
+    });
+    rows.forEach((r,i)=>{ if(r.m.endsWith('-01')){ el('text',{class:'axis-label',x:x(i),y:H-8,'text-anchor':'middle'},svg).textContent=r.m.slice(2,4); } });
+    let d='';
+    rows.forEach((r,i)=>{
+      const yy=y(r.hc);
+      d += (i===0?`M ${x(i)} ${yy} `:`L ${x(i)} ${yy} `);
+      if (i<rows.length-1) d += `L ${x(i+1)} ${yy} `;
+    });
+    el('path',{d,fill:'none',stroke:'var(--s1)','stroke-width':2,'stroke-linejoin':'round'},svg);
+    const last = rows[rows.length-1];
+    el('circle',{cx:x(rows.length-1),cy:y(last.hc),r:3.5,fill:'var(--s1)'},svg);
+    el('text',{class:'bar-label',x:x(rows.length-1)-6,y:y(last.hc)-10,'text-anchor':'end'},svg).textContent=last.hc+' today';
+  }
+
+  // ---- Utilization bar chart ----
+  function utilizationChart(container, rows){
+    const W=420,H=220,M={top:20,right:10,bottom:26,left:34};
+    const svg=makeSvg(container,W,H);
+    const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
+    const n=rows.length;
+    const x=scaleLinear([0,n-1],[M.left+iw/n*0.5,M.left+iw-iw/n*0.5]);
+    const bw = iw/n*0.55;
+    const y=scaleLinear([0,60],[M.top+ih,M.top]);
+    [0,20,40,60].forEach(v=>{
+      const yy=y(v);
+      el('line',{class:'gridline',x1:M.left,x2:M.left+iw,y1:yy,y2:yy},svg);
+      el('text',{class:'axis-label',x:M.left-6,y:yy+3,'text-anchor':'end'},svg).textContent=v+'%';
+    });
+    // target line at 65
+    rows.forEach((r,i)=>{
+      const by=y(r.pct), bh=M.top+ih-by;
+      const bx=x(i)-bw/2;
+      const g=el('rect',{x:bx,y:by,width:bw,height:bh,rx:2,fill: r.yr===2026 ? 'var(--surface-2)':'var(--s3)', stroke: r.yr===2026?'var(--baseline)':'none','stroke-dasharray':r.yr===2026?'3,3':'none'},svg);
+      el('text',{class:'axis-label',x:x(i),y:H-8,'text-anchor':'middle'},svg).textContent=String(r.yr).slice(2);
+      g.addEventListener('mousemove',(ev)=>{
+        showTT(ev.clientX,ev.clientY,`<div class="tt-h">${r.yr}</div><div class="tt-row"><span class="v">${r.pct}% billable</span></div><div class="tt-row"><span class="v">${r.billable.toLocaleString('en-US')} of ${(r.billable+r.internal).toLocaleString('en-US')} hours</span></div>`);
+      });
+      g.addEventListener('mouseleave', hideTT);
+    });
+  }
+
+  // ---- Forecast chart (history solid + projection dashed) ----
+  function forecastChart(container, pnlRows, forecastRows){
+    const hist = pnlRows.filter(r=>!r.partial);
+    const W=860,H=280,M={top:16,right:16,bottom:26,left:56};
+    const svg=makeSvg(container,W,H);
+    const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
+    const total = hist.length + forecastRows.length;
+    const x = scaleLinear([0,total-1],[M.left,M.left+iw]);
+    const maxY = niceMax(Math.max(...hist.map(r=>r.rev), ...forecastRows.map(r=>r.rev))*1.1);
+    const y = scaleLinear([0,maxY],[M.top+ih,M.top]);
+    for(let i=0;i<=4;i++){
+      const val=maxY*i/4, yy=y(val);
+      el('line',{class:'gridline',x1:M.left,x2:M.left+iw,y1:yy,y2:yy},svg);
+      el('text',{class:'axis-label',x:M.left-8,y:yy+3,'text-anchor':'end'},svg).textContent=(val/1e6).toFixed(0)+'M';
+    }
+    el('line',{class:'baseline',x1:M.left,x2:M.left+iw,y1:M.top+ih,y2:M.top+ih},svg);
+    const allM = hist.map(r=>r.m).concat(forecastRows.map(r=>r.m));
+    allM.forEach((m,i)=>{ if(m.endsWith('-01')){ el('text',{class:'axis-label',x:x(i),y:H-8,'text-anchor':'middle'},svg).textContent=m.slice(0,4); } });
+
+    let dHist='';
+    hist.forEach((r,i)=> dHist += (i===0?'M':'L')+` ${x(i)} ${y(r.rev)} `);
+    el('path',{d:dHist,fill:'none',stroke:'var(--s1)','stroke-width':2,'stroke-linecap':'round','stroke-linejoin':'round'},svg);
+
+    let dFore = `M ${x(hist.length-1)} ${y(hist[hist.length-1].rev)} `;
+    forecastRows.forEach((r,i)=> dFore += `L ${x(hist.length+i)} ${y(r.rev)} `);
+    el('path',{d:dFore,fill:'none',stroke:'var(--accent-ink)','stroke-width':2,'stroke-dasharray':'5,4','stroke-linecap':'round'},svg);
+
+    // divider
+    el('line',{x1:x(hist.length-1),x2:x(hist.length-1),y1:M.top,y2:M.top+ih,stroke:'var(--border-strong)','stroke-dasharray':'2,3'},svg);
+
+    const allRows = hist.map(r=>({m:r.m,rev:r.rev,fc:false})).concat(forecastRows.map(r=>({m:r.m,rev:r.rev,fc:true})));
+    const hoverLine = el('line',{class:'gridline',x1:0,x2:0,y1:M.top,y2:M.top+ih,style:'display:none;stroke:var(--border-strong)'},svg);
+    const hoverDot = el('circle',{r:3.5,stroke:'var(--surface)','stroke-width':1.5,style:'display:none'},svg);
+    const capture = el('rect',{x:M.left,y:M.top,width:iw,height:ih,fill:'transparent'},svg);
+    capture.addEventListener('mousemove',(ev)=>{
+      const rect=svg.getBoundingClientRect();
+      const px=(ev.clientX-rect.left)*(W/rect.width);
+      let i=Math.round((px-M.left)/iw*(allRows.length-1));
+      i=Math.max(0,Math.min(allRows.length-1,i));
+      const r=allRows[i];
+      hoverLine.setAttribute('x1',x(i));hoverLine.setAttribute('x2',x(i));hoverLine.style.display='block';
+      hoverDot.setAttribute('cx',x(i));hoverDot.setAttribute('cy',y(r.rev));hoverDot.setAttribute('fill', r.fc?'var(--accent-ink)':'var(--s1)');hoverDot.style.display='block';
+      showTT(ev.clientX,ev.clientY,`<div class="tt-h">${r.m}${r.fc?' · projected':''}</div><div class="tt-row"><span class="v">${fmtNOK(r.rev)} kr</span></div>`);
+    });
+    capture.addEventListener('mouseleave',()=>{hoverLine.style.display='none';hoverDot.style.display='none';hideTT();});
+  }
+
+  // ================================================================
+  // Render everything
+  // ================================================================
+  revenueMonthlyChart(document.getElementById('chartRevMonthly'), DATA.pnl_monthly.filter(r=>!r.partial));
+  annualBarChart(document.getElementById('chartRevAnnual'), DATA.annual_revenue);
+  costStructureChart(document.getElementById('chartCostStructure'), DATA.pnl_monthly);
+  marginChart(document.getElementById('chartMargin'), DATA.pnl_monthly);
+  segmentShareChart(document.getElementById('chartSegmentShare'), DATA.segment_totals, DATA.segment_customers);
+  hBarChart(document.getElementById('chartTopCustomers'), DATA.top_customers.map(c=>({label:c.name, v:c.rev, color:'var(--s1)'})), {mill:true});
+  hBarChart(document.getElementById('chartServiceLine'), DATA.product_rev.map((p,i)=>{
+    const names = {'Managed IT Support':'Managed IT Support','Zarządzanie infrastrukturą Microsoft':'Microsoft/Azure Management','Cyberbezpieczeństwo':'Cybersecurity','Konsulting i digitalizacja':'Consulting & Digitalization'};
+    const colors=['var(--s1)','var(--s2)','var(--s3)','var(--s4)'];
+    return {label:names[p.name]||p.name, v:p.rev, color:colors[i]};
+  }), {mill:true, leftLabel:170});
+  const naceNames = {
+    'Produksjon av metallkonstruksjoner':'Metal structure manufacturing',
+    'Handel med elektrisitet':'Electricity trading',
+    'Godstransport på vei':'Road freight transport',
+    'Andre helsetjenester':'Other healthcare services',
+    'Bankvirksomhet ellers':'Banking services',
+    'Juridisk tjenesteyting':'Legal services',
+    'Hovedkontortjenester':'Head-office services',
+    'Sjøtransport med gods':'Sea freight transport',
+    'Oppføring av bygninger':'Building construction',
+    'Havbruk av fisk i sjøvann':'Marine fish farming',
+    'Andre tjenester tilknyttet informasjonsteknologi':'Other IT-related services',
+    'Bedriftsrådgivning og annen administrativ rådgivning':'Business & administrative consulting',
+    'Vedlikehold og reparasjon av motorvogner':'Motor vehicle maintenance & repair',
+    'Annen butikkhandel med bredt vareutvalg':'General retail trade',
+    'Kjøp og salg av egen fast eiendom':'Real estate buying & selling',
+    'Elektrisk installasjonsarbeid':'Electrical installation work',
+    'Spesialisert designvirksomhet':'Specialized design services',
+    'Bearbeiding og konservering av fisk, skalldyr og bløtdyr':'Fish, shellfish & mollusc processing',
+  };
+  hBarChart(document.getElementById('chartNace'), DATA.nace.slice(0,10).map(n=>({label:naceNames[n.name]||n.name, v:n.rev, color:'var(--s1)'})), {mill:true, leftLabel:230});
+  headcountChart(document.getElementById('chartHeadcount'), DATA.headcount_monthly);
+  utilizationChart(document.getElementById('chartUtilization'), DATA.utilization);
+  forecastChart(document.getElementById('chartForecast'), DATA.pnl_monthly, DATA.forecast_monthly);
+
+  // expense table
+  const expenseRows = [
+    ["5000","Fixed salaries",78950813],
+    ["4292","Managed IT Support delivery cost (RMM/EDR/tooling)",64482126],
+    ["4291","Microsoft/Azure resale cost",23920488],
+    ["5400","Employer's payroll tax",11132121],
+    ["6300","Rent & premises",4095000],
+    ["7000","Travel expenses",2093916],
+    ["6410","Licenses & software",1820112],
+    ["6900","Phone & internet",1634144],
+    ["4290","Delivery consumables",1533000],
+    ["6700","External services",1349423],
+    ["7500","Insurance premiums",1178000],
+    ["7420","Client entertainment",993432],
+    ["6800","Office costs",953401],
+    ["7350","Staff canteen subsidy",937260],
+    ["6540","Equipment & fixtures",130189],
+  ];
+  const totalExp = expenseRows.reduce((a,r)=>a+r[2],0);
+  const tblExpense = document.getElementById('tblExpense');
+  expenseRows.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="num" style="font-family:var(--font-mono)">${r[0]}</td><td class="name">${r[1]}</td><td class="num">${r[2].toLocaleString('en-US')}</td><td class="num">${(r[2]/totalExp*100).toFixed(1)}%</td>`;
+    tblExpense.appendChild(tr);
+  });
+
+  // AR table
+  const arRows = [["Overdue (OVERDUE)", 33, 4930195],["Written off (WRITTEN_OFF)", 7, 696134]];
+  const tblAR = document.getElementById('tblAR');
+  arRows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td class="name">${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2].toLocaleString('en-US')}</td>`;
+    tblAR.appendChild(tr);
+  });
+
+})();
+</script>
