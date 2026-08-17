@@ -195,10 +195,41 @@
 
   a.jump{ color:var(--accent-ink); }
 
-  @media print{ nav.toc{ display:none; } }
+  .theme-toggle{
+    position:fixed; top:16px; right:16px; z-index:60;
+    display:flex; gap:2px; background:var(--surface); border:1px solid var(--border-strong);
+    border-radius:999px; padding:3px; box-shadow:var(--card-shadow);
+  }
+  .theme-toggle button{
+    appearance:none; border:none; background:transparent; width:30px; height:30px; border-radius:999px;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    color:var(--ink-muted); font-size:14px; line-height:1;
+  }
+  .theme-toggle button:hover{ color:var(--ink); }
+  .theme-toggle button.active{ background:var(--accent-soft); color:var(--accent-ink); }
+  .theme-toggle button:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
+  @media (max-width:520px){ .theme-toggle{ top:auto; bottom:16px; right:16px; } }
+
+  @media print{ nav.toc{ display:none; } .theme-toggle{ display:none; } }
 </style>
 
+<script>
+  // applied as early as possible to avoid a flash of the wrong theme
+  (function(){
+    try{
+      var t = localStorage.getItem('report-theme');
+      if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    }catch(e){}
+  })();
+</script>
+
 <div class="tooltip" id="tt"></div>
+
+<div class="theme-toggle" role="group" aria-label="Theme">
+  <button type="button" data-theme-choice="light" aria-label="Light theme">☀</button>
+  <button type="button" data-theme-choice="dark" aria-label="Dark theme">☾</button>
+</div>
 
 <div class="wrap">
   <div class="cover">
@@ -486,6 +517,26 @@
   const DATA = JSON.parse(document.getElementById('report-data').textContent);
   const NS = "http://www.w3.org/2000/svg";
   const tt = document.getElementById('tt');
+
+  // ---------------- light/dark toggle ----------------
+  const toggleButtons = Array.from(document.querySelectorAll('.theme-toggle button'));
+  function currentTheme(){
+    return document.documentElement.getAttribute('data-theme')
+      || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  }
+  function syncToggleUI(){
+    const t = currentTheme();
+    toggleButtons.forEach(b=>b.classList.toggle('active', b.dataset.themeChoice===t));
+  }
+  toggleButtons.forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const t = b.dataset.themeChoice;
+      document.documentElement.setAttribute('data-theme', t);
+      try{ localStorage.setItem('report-theme', t); }catch(e){}
+      syncToggleUI();
+    });
+  });
+  syncToggleUI();
 
   function el(tag, attrs, parent){
     const e = document.createElementNS(NS, tag);
