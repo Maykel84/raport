@@ -3,14 +3,15 @@
 <style>
   :root{
     color-scheme: light;
-    --bg:#f9f9f7; --surface:#fcfcfb; --surface-2:#f2f1ec;
-    --border: rgba(11,11,11,0.10); --border-strong: rgba(11,11,11,0.16);
-    --ink:#0b0b0b; --ink-2:#52514e; --ink-muted:#898781;
-    --grid:#e1e0d9; --baseline:#c3c2b7;
+    --bg:#eef0f3; --surface:#ffffff; --surface-2:#f2f1ec; --plot-bg:#ffffff;
+    --border: rgba(11,11,11,0.11); --border-strong: rgba(11,11,11,0.20);
+    --ink:#0b0b0b; --ink-2:#43423f; --ink-muted:#6f6e69;
+    --grid:#d8d7cf; --baseline:#a9a89f;
     --accent:#2a78d6; --accent-ink:#184f95; --accent-soft:#e4eefa;
     --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
     --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
     --success-text:#006300;
+    --card-shadow: 0 1px 2px rgba(11,11,11,0.04), 0 6px 16px rgba(11,11,11,0.06);
     --font-display: "Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
     --font-body: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
     --font-mono: ui-monospace,"SF Mono",Menlo,Consolas,monospace;
@@ -18,26 +19,28 @@
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
       color-scheme: dark;
-      --bg:#0d0d0d; --surface:#141412; --surface-2:#1a1a18;
-      --border: rgba(255,255,255,0.11); --border-strong: rgba(255,255,255,0.18);
-      --ink:#f5f5f3; --ink-2:#c3c2b7; --ink-muted:#8b8a83;
-      --grid:#2c2c2a; --baseline:#3c3c39;
+      --bg:#0d0d0d; --surface:#161613; --surface-2:#1a1a18; --plot-bg:#1e1f1c;
+      --border: rgba(255,255,255,0.12); --border-strong: rgba(255,255,255,0.20);
+      --ink:#f5f5f3; --ink-2:#c9c8c0; --ink-muted:#98968d;
+      --grid:#34342f; --baseline:#4a4a43;
       --accent:#3987e5; --accent-ink:#86b6ef; --accent-soft:#152238;
       --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
       --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#e2635a;
       --success-text:#0ca30c;
+      --card-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.25);
     }
   }
   :root[data-theme="dark"]{
     color-scheme: dark;
-    --bg:#0d0d0d; --surface:#141412; --surface-2:#1a1a18;
-    --border: rgba(255,255,255,0.11); --border-strong: rgba(255,255,255,0.18);
-    --ink:#f5f5f3; --ink-2:#c3c2b7; --ink-muted:#8b8a83;
-    --grid:#2c2c2a; --baseline:#3c3c39;
+    --bg:#0d0d0d; --surface:#161613; --surface-2:#1a1a18; --plot-bg:#1e1f1c;
+    --border: rgba(255,255,255,0.12); --border-strong: rgba(255,255,255,0.20);
+    --ink:#f5f5f3; --ink-2:#c9c8c0; --ink-muted:#98968d;
+    --grid:#34342f; --baseline:#4a4a43;
     --accent:#3987e5; --accent-ink:#86b6ef; --accent-soft:#152238;
     --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
     --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#e2635a;
     --success-text:#0ca30c;
+    --card-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.25);
   }
 
   *{box-sizing:border-box;}
@@ -119,7 +122,7 @@
 
   .card{
     background:var(--surface); border:1px solid var(--border); border-radius:12px;
-    padding:22px 22px 18px; margin-bottom:22px;
+    padding:22px 22px 18px; margin-bottom:22px; box-shadow:var(--card-shadow);
   }
   .card-row{ display:grid; grid-template-columns:1fr 1fr; gap:22px; }
   @media (max-width:720px){ .card-row{ grid-template-columns:1fr; } .kpi-grid{ grid-template-columns:repeat(2,1fr); } }
@@ -172,10 +175,12 @@
   /* ---------- Charts ---------- */
   .chart-svg{ display:block; width:100%; height:auto; overflow:visible; }
   .gridline{ stroke:var(--grid); stroke-width:1; shape-rendering:crispEdges; }
+  .plot-bg{ fill:var(--plot-bg); }
   .baseline{ stroke:var(--baseline); stroke-width:1; shape-rendering:crispEdges; }
-  .axis-label{ font-family:var(--font-mono); font-size:10.5px; fill:var(--ink-muted); }
-  .value-label{ font-family:var(--font-mono); font-size:10.5px; fill:var(--ink-2); font-variant-numeric:tabular-nums; }
-  .bar-label{ font-family:var(--font-mono); font-size:10.5px; fill:var(--ink); font-weight:600; }
+  .axis-label{ font-family:var(--font-mono); font-size:11px; fill:var(--ink-muted); }
+  .value-label{ font-family:var(--font-mono); font-size:11px; fill:var(--ink-2); font-variant-numeric:tabular-nums; }
+  .bar-label{ font-family:var(--font-mono); font-size:11px; fill:var(--ink); font-weight:700; }
+  .seg-label{ font-family:var(--font-mono); font-size:10.5px; font-weight:700; font-variant-numeric:tabular-nums; }
 
   .tooltip{
     position:fixed; pointer-events:none; z-index:80; background:var(--surface); border:1px solid var(--border-strong);
@@ -544,6 +549,9 @@
   function makeSvg(container, w, h, margin){
     const svg = el('svg', {class:'chart-svg', viewBox:`0 0 ${w} ${h}`, preserveAspectRatio:'xMidYMid meet'});
     container.appendChild(svg);
+    if (margin){
+      el('rect',{class:'plot-bg', x:margin.left, y:margin.top, width:Math.max(0,w-margin.left-margin.right), height:Math.max(0,h-margin.top-margin.bottom), rx:4},svg);
+    }
     return svg;
   }
   function scaleLinear(domain, range){
@@ -562,7 +570,7 @@
   // ---- Monthly revenue line/area chart ----
   function revenueMonthlyChart(container, rows){
     const W=860, H=260, M={top:14,right:14,bottom:26,left:56};
-    const svg = makeSvg(container, W, H);
+    const svg = makeSvg(container, W, H, M);
     const iw = W-M.left-M.right, ih = H-M.top-M.bottom;
     const x = scaleLinear([0, rows.length-1], [M.left, M.left+iw]);
     const maxY = niceMax(Math.max(...rows.map(r=>r.rev))*1.08);
@@ -619,7 +627,7 @@
   // ---- Annual revenue bar chart ----
   function annualBarChart(container, rows){
     const W=860, H=230, M={top:24,right:14,bottom:26,left:50};
-    const svg = makeSvg(container, W, H);
+    const svg = makeSvg(container, W, H, M);
     const iw = W-M.left-M.right, ih = H-M.top-M.bottom;
     const n = rows.length;
     const bw = iw/n*0.56;
@@ -670,8 +678,8 @@
       return (d.cogs+d.payroll+d.opex)/rev*100;
     }));
     const domainMax = Math.ceil((maxStackPct*1.06)/10)*10;
-    const W=860, H=260, M={top:14,right:14,bottom:26,left:44};
-    const svg = makeSvg(container, W, H);
+    const W=860, H=284, M={top:14,right:14,bottom:50,left:44};
+    const svg = makeSvg(container, W, H, M);
     const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
     const n=years.length;
     const bw = iw/n*0.55;
@@ -704,18 +712,23 @@
       segs.forEach(s=>{
         const pct = s.v/rev*100;
         const y0 = y(acc), y1 = y(acc+pct);
-        const g = el('rect',{x:bx,y:y1,width:bw,height:Math.max(0,y0-y1-1.5),rx:2,fill:s.color},svg);
+        const segH = Math.max(0,y0-y1-1.5);
+        const g = el('rect',{x:bx,y:y1,width:bw,height:segH,rx:2,fill:s.color},svg);
         g.addEventListener('mousemove',(ev)=>{
           showTT(ev.clientX, ev.clientY, `<div class="tt-h">${yr} · ${s.label}</div><div class="tt-row"><span class="v">${pct.toFixed(1)}% of revenue</span></div><div class="tt-row"><span class="v">${fmtNOK(s.v)} kr</span></div>`);
         });
         g.addEventListener('mouseleave', hideTT);
+        // segments tall enough get their value printed directly on the fill;
+        // thin slices (opex, small EBITDA) are captioned below the bar instead
+        if (segH >= 14 && (s.key==='cogs' || s.key==='payroll')){
+          el('text',{class:'seg-label',x:x(i),y:(y0+y1)/2+3.5,'text-anchor':'middle',style:'fill:#fff'},svg).textContent=pct.toFixed(0)+'%';
+        }
         acc += pct;
       });
-      if (d.ebitda < 0){
-        const lossPct = -d.ebitda/rev*100;
-        el('text',{class:'axis-label',x:x(i),y:y(acc)-6,'text-anchor':'middle',style:'fill:var(--critical);font-weight:600'},svg).textContent='−'+lossPct.toFixed(0)+'%';
-      }
-      el('text',{class:'axis-label',x:x(i),y:H-8,'text-anchor':'middle'},svg).textContent=yr;
+      const ebitdaPct = d.ebitda/rev*100;
+      el('text',{class:'axis-label',x:x(i),y:H-34,'text-anchor':'middle',style:'font-weight:700;fill:var(--ink)'},svg).textContent=yr + (i===years.length-1 && pnlRows.some(r=>r.partial && r.m.startsWith(yr)) ? '*' : '');
+      el('text',{class:'seg-label',x:x(i),y:H-20,'text-anchor':'middle',style:'fill:var(--s3)'},svg).textContent='Opex '+(d.opex/rev*100).toFixed(1)+'%';
+      el('text',{class:'seg-label',x:x(i),y:H-8,'text-anchor':'middle',style:`fill:${ebitdaPct<0?'var(--critical)':'var(--s4)'}`},svg).textContent=(ebitdaPct<0?'Loss ':'EBITDA ')+Math.abs(ebitdaPct).toFixed(1)+'%';
     });
   }
 
@@ -723,7 +736,7 @@
   function marginChart(container, rows){
     const data = rows.filter(r=>!r.partial && r.rev>0).map(r=>({m:r.m, pct: r.ebitda/r.rev*100}));
     const W=860,H=220,M={top:14,right:14,bottom:26,left:44};
-    const svg = makeSvg(container,W,H);
+    const svg = makeSvg(container, W, H, M);
     const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
     const x = scaleLinear([0,data.length-1],[M.left,M.left+iw]);
     const maxAbs = Math.max(...data.map(d=>Math.abs(d.pct)))*1.15;
@@ -768,7 +781,7 @@
     const n = rows.length;
     const rowH = 30, W=860, M={top:6,right:70,bottom:6,left:opts.leftLabel||190};
     const H = n*rowH + M.top+M.bottom;
-    const svg = makeSvg(container, W, H);
+    const svg = makeSvg(container, W, H, M);
     const iw = W-M.left-M.right;
     const maxV = niceMax(Math.max(...rows.map(r=>r.v))*1.05);
     const x = scaleLinear([0,maxV],[M.left, M.left+iw]);
@@ -795,18 +808,24 @@
     const order = ['Enterprise','Mid-market','SMB'];
     const colors = {'Enterprise':'var(--s1)','Mid-market':'var(--s2)','SMB':'var(--s3)'};
     const sum = order.reduce((a,k)=>a+totals[k],0);
-    const W=860,H=64,M={top:8,right:8,bottom:8,left:8};
-    const svg = makeSvg(container,W,H);
+    const barH = 40;
+    const W=860,H=88,M={top:8,right:8,bottom:32,left:8};
+    const svg = makeSvg(container, W, H, M);
     const iw=W-M.left-M.right;
     let acc = M.left;
     order.forEach(k=>{
       const w = totals[k]/sum*iw;
-      const g = el('rect',{x:acc,y:M.top,width:Math.max(0,w-2),height:H-M.top-M.bottom,rx:4,fill:colors[k]},svg);
-      if (w>60){
-        el('text',{x:acc+w/2,y:M.top+(H-M.top-M.bottom)/2+4,'text-anchor':'middle',style:'fill:white;font-family:var(--font-mono);font-size:12px;font-weight:600'},svg).textContent=(totals[k]/sum*100).toFixed(0)+'%';
+      const pct = totals[k]/sum*100;
+      const g = el('rect',{x:acc,y:M.top,width:Math.max(0,w-2),height:barH,rx:4,fill:colors[k]},svg);
+      // wide segments get the % printed on the fill; narrow ones (e.g. SMB) get
+      // it just below the bar so the value is always visible, never blank
+      if (w>=56){
+        el('text',{x:acc+w/2,y:M.top+barH/2+4,'text-anchor':'middle',style:'fill:white;font-family:var(--font-mono);font-size:12px;font-weight:700'},svg).textContent=pct.toFixed(0)+'%';
+      } else {
+        el('text',{class:'seg-label',x:acc+w/2,y:M.top+barH+16,'text-anchor':'middle',style:`fill:${colors[k]}`},svg).textContent=pct.toFixed(1)+'%';
       }
       g.addEventListener('mousemove',(ev)=>{
-        showTT(ev.clientX,ev.clientY,`<div class="tt-h">${k} · ${counts[k]} customers</div><div class="tt-row"><span class="v">${fmtNOK(totals[k])} kr</span></div><div class="tt-row"><span class="v">${(totals[k]/sum*100).toFixed(1)}% of revenue</span></div>`);
+        showTT(ev.clientX,ev.clientY,`<div class="tt-h">${k} · ${counts[k]} customers</div><div class="tt-row"><span class="v">${fmtNOK(totals[k])} kr</span></div><div class="tt-row"><span class="v">${pct.toFixed(1)}% of revenue</span></div>`);
       });
       g.addEventListener('mouseleave', hideTT);
       acc += w;
@@ -825,7 +844,7 @@
   // ---- Headcount step chart ----
   function headcountChart(container, rows){
     const W=420,H=220,M={top:14,right:10,bottom:26,left:34};
-    const svg=makeSvg(container,W,H);
+    const svg=makeSvg(container, W, H, M);
     const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
     const x=scaleLinear([0,rows.length-1],[M.left,M.left+iw]);
     const maxY=niceMax(Math.max(...rows.map(r=>r.hc))*1.15);
@@ -851,7 +870,7 @@
   // ---- Utilization bar chart ----
   function utilizationChart(container, rows){
     const W=420,H=220,M={top:20,right:10,bottom:26,left:34};
-    const svg=makeSvg(container,W,H);
+    const svg=makeSvg(container, W, H, M);
     const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
     const n=rows.length;
     const x=scaleLinear([0,n-1],[M.left+iw/n*0.5,M.left+iw-iw/n*0.5]);
@@ -867,6 +886,7 @@
       const by=y(r.pct), bh=M.top+ih-by;
       const bx=x(i)-bw/2;
       const g=el('rect',{x:bx,y:by,width:bw,height:bh,rx:2,fill: r.yr===2026 ? 'var(--surface-2)':'var(--s3)', stroke: r.yr===2026?'var(--baseline)':'none','stroke-dasharray':r.yr===2026?'3,3':'none'},svg);
+      el('text',{class:'bar-label',x:x(i),y:by-7,'text-anchor':'middle'},svg).textContent=r.pct.toFixed(0)+'%';
       el('text',{class:'axis-label',x:x(i),y:H-8,'text-anchor':'middle'},svg).textContent=String(r.yr).slice(2);
       g.addEventListener('mousemove',(ev)=>{
         showTT(ev.clientX,ev.clientY,`<div class="tt-h">${r.yr}</div><div class="tt-row"><span class="v">${r.pct}% billable</span></div><div class="tt-row"><span class="v">${r.billable.toLocaleString('en-US')} of ${(r.billable+r.internal).toLocaleString('en-US')} hours</span></div>`);
@@ -879,7 +899,7 @@
   function forecastChart(container, pnlRows, forecastRows){
     const hist = pnlRows.filter(r=>!r.partial);
     const W=860,H=280,M={top:16,right:16,bottom:26,left:56};
-    const svg=makeSvg(container,W,H);
+    const svg=makeSvg(container, W, H, M);
     const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
     const total = hist.length + forecastRows.length;
     const x = scaleLinear([0,total-1],[M.left,M.left+iw]);
