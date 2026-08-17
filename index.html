@@ -294,15 +294,14 @@
       <div class="legend" id="segmentLegend"></div>
     </div>
 
-    <div class="card-row">
-      <div class="card">
-        <div class="chart-title-row"><span class="t">Top 10 customers, total revenue</span><span class="u">NOK mill.</span></div>
-        <div id="chartTopCustomers"></div>
-      </div>
-      <div class="card">
-        <div class="chart-title-row"><span class="t">Revenue by service line</span><span class="u">NOK mill.</span></div>
-        <div id="chartServiceLine"></div>
-      </div>
+    <div class="card">
+      <div class="chart-title-row"><span class="t">Top 10 customers, total revenue</span><span class="u">NOK mill.</span></div>
+      <div id="chartTopCustomers"></div>
+    </div>
+
+    <div class="card">
+      <div class="chart-title-row"><span class="t">Revenue by service line</span><span class="u">NOK mill.</span></div>
+      <div id="chartServiceLine"></div>
     </div>
 
     <div class="card">
@@ -331,15 +330,14 @@
     <div class="sec-head"><span class="sec-num">04</span><h2 class="sec-title">People &amp; delivery</h2></div>
     <p class="sec-dek">Headcount has grown from 6 to 38 employees, with the single largest hiring wave in September 2022 (+6 people). Utilization has steadily improved but still sits below typical MSP industry levels.</p>
 
-    <div class="card-row">
-      <div class="card">
-        <div class="chart-title-row"><span class="t">Headcount over time</span><span class="u">employees</span></div>
-        <div id="chartHeadcount"></div>
-      </div>
-      <div class="card">
-        <div class="chart-title-row"><span class="t">Billable share of hours, by year</span><span class="u">%</span></div>
-        <div id="chartUtilization"></div>
-      </div>
+    <div class="card">
+      <div class="chart-title-row"><span class="t">Headcount over time</span><span class="u">employees</span></div>
+      <div id="chartHeadcount"></div>
+    </div>
+
+    <div class="card">
+      <div class="chart-title-row"><span class="t">Billable share of hours, by year</span><span class="u">%</span></div>
+      <div id="chartUtilization"></div>
     </div>
 
     <div class="card-row">
@@ -843,7 +841,7 @@
 
   // ---- Headcount step chart ----
   function headcountChart(container, rows){
-    const W=420,H=220,M={top:14,right:10,bottom:26,left:34};
+    const W=860,H=240,M={top:14,right:14,bottom:26,left:40};
     const svg=makeSvg(container, W, H, M);
     const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
     const x=scaleLinear([0,rows.length-1],[M.left,M.left+iw]);
@@ -869,7 +867,7 @@
 
   // ---- Utilization bar chart ----
   function utilizationChart(container, rows){
-    const W=420,H=220,M={top:20,right:10,bottom:26,left:34};
+    const W=860,H=240,M={top:20,right:14,bottom:26,left:40};
     const svg=makeSvg(container, W, H, M);
     const iw=W-M.left-M.right, ih=H-M.top-M.bottom;
     const n=rows.length;
@@ -950,12 +948,12 @@
   costStructureChart(document.getElementById('chartCostStructure'), DATA.pnl_monthly);
   marginChart(document.getElementById('chartMargin'), DATA.pnl_monthly);
   segmentShareChart(document.getElementById('chartSegmentShare'), DATA.segment_totals, DATA.segment_customers);
-  hBarChart(document.getElementById('chartTopCustomers'), DATA.top_customers.map(c=>({label:c.name, v:c.rev, color:'var(--s1)'})), {mill:true});
+  hBarChart(document.getElementById('chartTopCustomers'), DATA.top_customers.map(c=>({label:c.name, v:c.rev, color:'var(--s1)'})), {mill:true, leftLabel:210});
   hBarChart(document.getElementById('chartServiceLine'), DATA.product_rev.map((p,i)=>{
     const names = {'Managed IT Support':'Managed IT Support','Zarządzanie infrastrukturą Microsoft':'Microsoft/Azure Management','Cyberbezpieczeństwo':'Cybersecurity','Konsulting i digitalizacja':'Consulting & Digitalization'};
     const colors=['var(--s1)','var(--s2)','var(--s3)','var(--s4)'];
     return {label:names[p.name]||p.name, v:p.rev, color:colors[i]};
-  }), {mill:true, leftLabel:170});
+  }), {mill:true, leftLabel:210});
   const naceNames = {
     'Produksjon av metallkonstruksjoner':'Metal structure manufacturing',
     'Handel med elektrisitet':'Electricity trading',
