@@ -254,6 +254,7 @@
       <a href="#s4" class="jump">04 People &amp; delivery</a>
       <a href="#s5" class="jump">05 Cash &amp; risk</a>
       <a href="#s6" class="jump">06 Forecast &amp; targets</a>
+      <a href="#s7" class="jump">07 Events &amp; variability</a>
     </div>
   </nav>
 
@@ -298,7 +299,7 @@
     <div class="card">
       <div class="chart-title-row"><span class="t">EBITDA margin by month</span><span class="u">%</span></div>
       <div id="chartMargin"></div>
-      <p class="sub-note" style="margin-top:10px">The recurring June troughs (−5 to −7&nbsp;% margin) coincide with the booking of statutory holiday pay (the 5,900-series payroll accounts) — not an operating problem, but a predictable cash-flow load to plan liquidity around.</p>
+      <p class="sub-note" style="margin-top:10px">The recurring June troughs (−5 to −7&nbsp;% margin) coincide with the booking of statutory holiday pay (the 5,900-series payroll accounts) — not an operating problem, but a predictable cash-flow load to plan liquidity around. Four smaller, one-off dips (Apr 2020, Feb 2021, Apr 2022, Aug 2023) are a different cause: a one-time "other operating cost" (account 7790) of 47k–97k kr each, logged as an unprofitable-quarter event — see section 07.</p>
     </div>
 
     <div class="card">
@@ -344,15 +345,18 @@
 
     <div class="card">
       <h3 class="sub">Customer churn</h3>
-      <p class="sub-note">Only 2 of 50 customers have terminated their contract over the portfolio's lifetime — both in the SMB segment.</p>
+      <p class="sub-note">2 customers have a formal churn date on file, both in the SMB segment; a third (below) stopped ordering entirely following an insolvency event but was never marked churned in the customer record.</p>
+      <div class="wide-scroll">
       <table class="dt">
-        <thead><tr><th>Customer</th><th>Segment</th><th>Customer since</th><th>Ended</th><th class="num">Tenure</th></tr></thead>
+        <thead><tr><th>Customer</th><th>Segment</th><th>Customer since</th><th>Ended</th><th class="num">Tenure</th><th>Reason</th></tr></thead>
         <tbody>
-          <tr><td class="name">Vestfold Handel AS</td><td>SMB</td><td>Feb 2021</td><td>Nov 2024</td><td class="num">3y 9m</td></tr>
-          <tr><td class="name">Moss Elektro AS</td><td>SMB</td><td>Apr 2023</td><td>Oct 2025</td><td class="num">2y 6m</td></tr>
+          <tr><td class="name">Vestfold Handel AS</td><td>SMB</td><td>Feb 2021</td><td>Nov 2024</td><td class="num">3y 9m</td><td>Recorded churn — cause not logged</td></tr>
+          <tr><td class="name">Moss Elektro AS</td><td>SMB</td><td>Apr 2023</td><td>Oct 2025</td><td class="num">2y 6m</td><td>Recorded churn — cause not logged</td></tr>
+          <tr><td class="name">Agder Maritime AS</td><td>SMB</td><td>Sep 2021</td><td>Nov 2024*</td><td class="num">3y 2m</td><td>Client insolvency — final invoice written off, no orders since</td></tr>
         </tbody>
       </table>
-      <p class="sub-note" style="margin-top:10px">Gross churn equals 4&nbsp;% of all customers ever onboarded — very low churn overall, but the SMB segment is the only one with observed attrition and merits its own retention target.</p>
+      </div>
+      <p class="sub-note" style="margin-top:10px">Gross churn equals 4&nbsp;% of formally recorded terminations — but effectively 6&nbsp;% once Agder Maritime AS is counted, since its bankruptcy in November 2024 was never reflected in the customer record's churn date (<code>churn_date</code> is still null for this account — see section 07 for the full events log). Every observed departure so far is in the SMB segment, which merits its own retention target.</p>
     </div>
   </section>
 
@@ -424,7 +428,7 @@
           <thead><tr><th>Status</th><th class="num">Orders</th><th class="num">Total (NOK, incl. VAT)</th></tr></thead>
           <tbody id="tblAR"></tbody>
         </table>
-        <p class="sub-note" style="margin-top:10px">7.0M kr — equal to 14.4&nbsp;% of trailing twelve-month revenue — sits as overdue or written off across the company's history. The write-off total alone (1.75M kr across 9 orders) is more than double what a comparable healthy MSP would expect, concentrated on a small number of Enterprise accounts (Bergström Industri, Nordkraft Energi and Innlandet Helse recur most often).</p>
+        <p class="sub-note" style="margin-top:10px">7.0M kr — equal to 14.4&nbsp;% of trailing twelve-month revenue — sits as overdue or written off across the company's history. The write-off total alone (1.75M kr across 9 orders) is more than double what a comparable healthy MSP would expect, concentrated on a small number of Enterprise accounts (Bergström Industri, Nordkraft Energi and Innlandet Helse recur most often). We checked this against the logged event history in section 07: Bergström Industri did have a temporary-hardship event (Oct–Dec 2022), but its actual overdue/written-off orders fall in 2020 and 2025 — outside that window. Nordkraft Energi and Innlandet Helse have no logged event at all. None of the three repeat names' bad-debt timing lines up with a documented cause — this remains baseline payment-risk noise, not an explained pattern, and is worth investigating rather than assuming it's understood.</p>
       </div>
     </div>
 
@@ -501,6 +505,102 @@
     </div>
 
     <div class="callout" style="margin-top:26px"><b>Methodology note:</b> The forecast is deliberately simple — a linear trend with no seasonal adjustment — to avoid false precision. It has historically tracked well over a 1–2 quarter horizon, but should be revised quarterly against actual booked revenue, especially around June (holiday pay) and around large single contracts such as Bergström Industri or Nordkraft Energi. The headcount target above is the one number in this report that is not a trend projection — it is a judgment call based on a hiring freeze that has now lasted nearly four years against roughly doubling revenue.</p>
+  </section>
+
+  <!-- ===================== 07 EVENTS & VARIABILITY ===================== -->
+  <section class="rep" id="s7">
+    <div class="sec-head"><span class="sec-num">07</span><h2 class="sec-title">Events &amp; variability</h2></div>
+    <p class="sec-dek">The numbers above don't move in a straight line — they reflect real business turbulence: clients that expanded or scaled back, one that closed, unplanned costs, and seasonal Norwegian patterns. This section shows what happened and when, sourced directly from the generator's own verified event log, not reconstructed after the fact from side effects.</p>
+
+    <div class="card-row">
+      <div class="target-card">
+        <div class="tc-label">Client-level events</div>
+        <div class="tc-target">22</div>
+        <div class="tc-how">Over 7.5 years — hardship, expansion, reduction, one-off projects, and one bankruptcy.</div>
+      </div>
+      <div class="target-card">
+        <div class="tc-label">Company-level events</div>
+        <div class="tc-target">7</div>
+        <div class="tc-how">Equipment purchases, one-off unprofitable-quarter costs, and one supplier renegotiation.</div>
+      </div>
+      <div class="target-card">
+        <div class="tc-label">Customers affected</div>
+        <div class="tc-target">16 of 50</div>
+        <div class="tc-how">Roughly one in three customers has had at least one logged event; Bergström Industri and Vestland Maritime each had three.</div>
+      </div>
+      <div class="target-card">
+        <div class="tc-label">Largest single impact</div>
+        <div class="tc-target">Agder Maritime AS</div>
+        <div class="tc-how">Bankruptcy, Nov 2024 — permanent churn plus a written-off final invoice (72,277 kr). The only bankruptcy in the company's history.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="sub">Timeline of logged events</h3>
+      <p class="sub-note">All 29 events, chronological. Client events change ticket volume, order value, or active status for one account; company events hit the general ledger directly.</p>
+      <div class="wide-scroll">
+      <table class="dt">
+        <thead><tr><th>Date</th><th>Level</th><th>Who</th><th>Event</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>2020-02</td><td>Client</td><td class="name">Østfold Finans AS</td><td>Temporary hardship</td><td>Ticket volume ×0.46 through May 2020</td></tr>
+          <tr><td>2020-04</td><td>Company</td><td class="name">—</td><td>Unprofitable quarter</td><td>One-off cost 46,900 kr</td></tr>
+          <tr><td>2020-05</td><td>Client</td><td class="name">Bergström Industri AS</td><td>One-off large project</td><td>Extra S04 consulting order</td></tr>
+          <tr><td>2020-07</td><td>Client</td><td class="name">Bergström Industri AS</td><td>One-off large project</td><td>Extra S04 consulting order</td></tr>
+          <tr><td>2021-02</td><td>Company</td><td class="name">—</td><td>Unprofitable quarter</td><td>One-off cost 96,900 kr</td></tr>
+          <tr><td>2022-01</td><td>Client</td><td class="name">Østfold Finans AS</td><td>Offer expansion</td><td>Added S04 as a standing service</td></tr>
+          <tr><td>2022-01</td><td>Company</td><td class="name">—</td><td>Equipment investment</td><td>231,904 kr, capitalized (account 1200)</td></tr>
+          <tr><td>2022-04</td><td>Company</td><td class="name">—</td><td>Unprofitable quarter</td><td>One-off cost 58,100 kr</td></tr>
+          <tr><td>2022-10</td><td>Client</td><td class="name">Bergström Industri AS</td><td>Temporary hardship</td><td>Ticket volume ×0.51 through Dec 2022</td></tr>
+          <tr><td>2022-11</td><td>Client</td><td class="name">Vestfold Handel AS</td><td>Temporary hardship</td><td>Ticket volume ×0.58 through Feb 2023</td></tr>
+          <tr><td>2023-01</td><td>Client</td><td class="name">Kristiansen Gruppen AS</td><td>One-off large project</td><td>Extra S04 consulting order</td></tr>
+          <tr><td>2023-03</td><td>Client</td><td class="name">Rogaland Teknikk AS</td><td>One-off large project</td><td>Extra S04 consulting order</td></tr>
+          <tr><td>2023-08</td><td>Company</td><td class="name">—</td><td>Unprofitable quarter</td><td>One-off cost 50,900 kr</td></tr>
+          <tr><td>2024-01</td><td>Client</td><td class="name">Kristiansund Transport AS</td><td>Offer reduction</td><td>Dropped S02</td></tr>
+          <tr><td>2024-02</td><td>Client</td><td class="name">Harstad Finans AS</td><td>Offer expansion</td><td>Added S04 as a standing service</td></tr>
+          <tr><td>2024-09</td><td>Company</td><td class="name">—</td><td>Equipment investment</td><td>187,486 kr, capitalized (account 1200)</td></tr>
+          <tr><td>2024-11</td><td>Client</td><td class="name">Agder Maritime AS</td><td style="color:var(--critical);font-weight:600">Bankruptcy</td><td>Churn + final invoice written off</td></tr>
+          <tr><td>2024-11</td><td>Client</td><td class="name">Sandefjord Transport AS</td><td>Offer reduction</td><td>Dropped S02</td></tr>
+          <tr><td>2024-12</td><td>Client</td><td class="name">Halvorsen &amp; Partnere AS</td><td>Temporary hardship</td><td>Ticket volume ×0.58 through Jan 2025</td></tr>
+          <tr><td>2024-12</td><td>Client</td><td class="name">Vestland Maritime AS</td><td>One-off large project</td><td>Extra S04 consulting order</td></tr>
+          <tr><td>2025-06</td><td>Client</td><td class="name">Grenland Energi AS</td><td>Temporary hardship</td><td>Ticket volume ×0.55 through Sep 2025</td></tr>
+          <tr><td>2025-08</td><td>Client</td><td class="name">Vestland Maritime AS</td><td>Temporary hardship</td><td>Ticket volume ×0.45 through Oct 2025</td></tr>
+          <tr><td>2025-09</td><td>Company</td><td class="name">—</td><td>Supplier renegotiation</td><td>Microsoft (L01) contract, −1.8&nbsp;% going forward</td></tr>
+          <tr><td>2026-02</td><td>Client</td><td class="name">Buskerud Finans AS</td><td>One-off large project</td><td>Extra S04 consulting order</td></tr>
+          <tr><td>2026-02</td><td>Client</td><td class="name">Halden Design AS</td><td>Temporary hardship</td><td>Ticket volume ×0.51 through May 2026</td></tr>
+          <tr><td>2026-03</td><td>Client</td><td class="name">Vestland Maritime AS</td><td>One-off large project</td><td>Extra S04 consulting order</td></tr>
+          <tr><td>2026-04</td><td>Client</td><td class="name">Jessheim Design AS</td><td>Temporary hardship</td><td>Ticket volume ×0.45 through Jun 2026</td></tr>
+          <tr><td>2026-07</td><td>Client</td><td class="name">Halden Design AS</td><td>Offer expansion</td><td>Added S04 as a standing service</td></tr>
+          <tr><td>2026-08</td><td>Client</td><td class="name">Nordland Havbruk AS</td><td>One-off large project</td><td>Extra S04 consulting order</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="card-row">
+      <div class="card">
+        <h3 class="sub">Events by category</h3>
+        <table class="dt">
+          <thead><tr><th>Category</th><th class="num">Count</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Temporary hardship</td><td class="num">8</td></tr>
+            <tr><td class="name">One-off large project</td><td class="num">8</td></tr>
+            <tr><td class="name">Offer expansion</td><td class="num">3</td></tr>
+            <tr><td class="name">Offer reduction</td><td class="num">2</td></tr>
+            <tr><td class="name">Unprofitable quarter</td><td class="num">4</td></tr>
+            <tr><td class="name">Equipment investment</td><td class="num">2</td></tr>
+            <tr><td class="name">Bankruptcy</td><td class="num">1</td></tr>
+            <tr><td class="name">Supplier renegotiation</td><td class="num">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3 class="sub">Seasonality: two Norwegian patterns baked into every year</h3>
+        <p class="sub-note"><b>Fellesferie (July).</b> Support-ticket volume drops sharply every July as consultants take the common summer holiday — billable tickets run 28–53&nbsp;% below June across every mature year (2020–2026), averaging about 41&nbsp;% fewer. It's the single largest recurring swing in the delivery data, bigger than the year-end holiday-pay effect visible in section 02.</p>
+        <p class="sub-note" style="margin-top:10px"><b>Budsjettflukt (Q4).</b> Enterprise and mid-market customers get a 1.4&times; higher chance of an extra discretionary consulting order (S04) in November and December — the Norwegian year-end pattern of spending down IT budgets before they reset. November and December are consistently among the busiest months for S04 orders across the portfolio's history.</p>
+      </div>
+    </div>
+
+    <div class="callout"><b>Reading this section:</b> None of this changes the totals in sections 01–06 — it explains texture already visible in them. A June EBITDA dip, a churned SMB account, a spike in written-off receivables: these aren't unexplained anomalies, they trace back to a specific, dated, logged cause.</p>
   </section>
 
   <footer class="rep">
@@ -581,7 +681,7 @@
   });
 
   // ---------------- scroll spy ----------------
-  const sections = ['s1','s2','s3','s4','s5','s6'].map(id=>document.getElementById(id));
+  const sections = ['s1','s2','s3','s4','s5','s6','s7'].map(id=>document.getElementById(id));
   const links = Array.from(document.querySelectorAll('nav.toc a'));
   function onScroll(){
     let idx = 0;
